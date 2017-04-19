@@ -46,6 +46,8 @@ gamefield_t::rect() const {
 }
 //-----------------------------------------------------------------------------//
 namespace impl {
+	// IMPORTANT NOTE!!! This is why you shouldn't always use templates
+	// it was a nice finger training though
 	enum class dim_t {
 		X,
 		Y,
@@ -90,8 +92,8 @@ namespace impl {
 //-----------------------------------------------------------------------------//
 void 
 gamefield_t::move_ship(instruction_t instruction) {
-	const auto& sh_pos = this->ship_.position();
-	const auto& sh_rect = this->ship_.rect();
+	//const auto& sh_pos = this->ship_.position();
+	//const auto& sh_rect = this->ship_.rect();
 
 	impl::move_helper<instruction_t::UP, impl::dim_t::Y, impl::sign_t::MINUS>(
 			this->rect_, this->ship_, instruction);
