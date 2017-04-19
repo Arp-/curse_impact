@@ -1,35 +1,61 @@
 
 
-#ifndef CURSE_IMPACT_GAMEFIELD_T_HPP
-#define CURSE_IMPACT_GAMEFIELD_T_HPP
+#ifndef CURSE_IMPACT_GAMEFIELD_HPP
+#define CURSE_IMPACT_GAMEFIELD_HPP
 
-#include "ship.hpp"
-
-#include <ncurses.h> // fuck it i couldnot decuple the include
+#include <vector>
+#include <memory>
+#include "ship_t.hpp"
+#include "bullet_t.hpp"
+#include "rect_t.hpp"
+#include "instruction_t.hpp"
 
 class gamefield_t {
 
-	friend void render_gamefield(WINDOW* win, const gamefield_t&);
-
+	using ship_list_t = std::vector<ship_t>;
+	using bullet_list_t = std::vector<bullet_t>;
 
 	public: //-- public functions --//
 
-		gamefield_t(int width, int height);
+		gamefield_t(rect_t);
 
-		~gamefield_t();
+		~gamefield_t() = default;
+
+		template <typename ...Args>
+		void set_ship(Args&& ... args) {
+			this->ship_ = ship_t { args... };
+		}
+
+		template <typename ...Args>
+		void emplace_enemy_ship(Args&& ...args) {
+			this->enemy_list_.emplace_back(args...);
+		}
 
 
-	private: //-- private variables --//
+		const ship_t& ship() const;
 
-		int width_;
+		const std::vector<ship_t>& enemy_list() const;
 
-		int height_;
+		const std::vector<bullet_t>& bullet_list() const;
 
-		int time_; // the current time of the rendered playfield, at the end we reach the boss
+		const rect_t& rect() const;
+
+		void move_ship(instruction_t instruction);
+
+
+	private: //-- private stuff --// 
+
+		int time_;
+
+		rect_t rect_;
 
 		ship_t ship_;
 
+		ship_list_t enemy_list_;
+
+		bullet_list_t bullet_list_;
 
 };
 
-#endif // CURSE_IMPACT_GAMEFIELD_T_HPP
+
+#endif // CURSE_IMPACT_GAMEFIELD_HPP
