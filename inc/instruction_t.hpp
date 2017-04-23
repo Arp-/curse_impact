@@ -25,9 +25,13 @@ struct instruction_t {
 		SHOOT,
 		ULTIMATE
 	};
+	enum class other_t {
+		QUIT
+	};
 
 	movement_t movement;
 	attack_t attack;
+	other_t other;
 	
 };
 

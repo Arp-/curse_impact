@@ -1,1 +1,1 @@
-g++ -I "inc" src/*.cpp  -lncurses -o curse_impact
+g++ -I "inc" src/*.cpp  -lncurses -o curse_impact -ggdb

@@ -52,6 +52,7 @@ static void render_gamefield(const gamefield_t& gamefield) {
 static instruction_t get_instruction() {
 	using movement_t = instruction_t::movement_t;
 	using attack_t = instruction_t::attack_t;
+	using other_t = instruction_t::other_t;
 
 	instruction_t instr;
 	instr.movement = movement_t::NOP;
@@ -79,9 +80,33 @@ static instruction_t get_instruction() {
 				instr.attack = attack_t::SHOOT;
 				break;
 		}
+		switch (ch) {
+			case 'q':
+				instr.other = other_t::QUIT;
+		}
 	} while (ERR != ch);
 
 	return instr;
+}
+//-----------------------------------------------------------------------------//
+static void render_enemy_list(gamefield_t& gf) {
+	ship_texture_t clear_texture = {{
+		{ ' ', ' ', ' ' },
+		{ ' ', ' ', ' ' },
+		{ ' ', ' ', ' ' },
+	}};
+	ship_texture_t ship_texture  = {{
+		{ ' ', 'e', ' ' },
+		{ 'e', 'e', 'e' },
+		{ ' ', 'e', ' ' },
+	}};
+	for (const auto& ship : gf.enemy_list()) {
+		render_ship(ship, clear_texture);
+	}
+	gf.enemy_list_tick();
+	for (const auto& ship : gf.enemy_list()) {
+		render_ship(ship, ship_texture);
+	}
 }
 //-----------------------------------------------------------------------------//
 static void render_movement(gamefield_t& gf, instruction_t instruction) {
@@ -99,6 +124,7 @@ static void render_movement(gamefield_t& gf, instruction_t instruction) {
 	render_ship(ship, clear_texture);
 	gf.move_ship(instruction);
 	render_ship(ship, ship_texture);
+	render_enemy_list(gf);
 }
 //-----------------------------------------------------------------------------//
 static void render_bullet_list(const gamefield_t::bullet_list_t& bullet_list, const char texture) {
@@ -119,10 +145,6 @@ static void render_shoot(gamefield_t& gf, instruction_t instruction) {
 	render_bullet_list(gf.bullet_list(), '-');
 }
 //-----------------------------------------------------------------------------//
-static void flush_input_queue() {
-	while (ERR != getch());
-}
-//-----------------------------------------------------------------------------//
 int main() {
 
 	gamefield_t gf({100,40});
@@ -133,24 +155,29 @@ int main() {
 
 	initscr();
 	noecho();
-	//halfdelay(10);
 	cbreak();
 	timeout(0);
 
+
+	ship_t enemy {{ 10, 10 }, { 3, 3 }, 0, 10};
+	gf.add_enemy(enemy);
 	render_gamefield(gf);
-	sleep(1);
 
 	while (true) {
 		instruction_t instruction = get_instruction();
+		if (instruction.other == instruction_t::other_t::QUIT) {
+			break;
+		}
 		move(1,1);
 		printw("instruction %02X, %02X", (int)instruction.movement, (int)instruction.attack );
 		render_shoot(gf, instruction);
 		render_movement(gf, instruction);
+		gf.hitcheck();
 		refresh();
-//		flush_input_queue();
 		usleep(100000);
 	}
 
+	nocbreak();
 	endwin();
 	return 0;
 }

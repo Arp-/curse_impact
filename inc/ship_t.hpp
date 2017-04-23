@@ -15,6 +15,8 @@ class ship_t {
 
 		ship_t(position_t pos, rect_t rect, int speed);
 
+		ship_t(position_t pos, rect_t rect, int speed, int hp);
+
 		ship_t(const ship_t& ship) = default;
 
 		~ship_t() = default;
@@ -25,7 +27,16 @@ class ship_t {
 
 		int speed() const;
 
+		int hp() const;
+
+		void hp_decrement();
+
 		void position(const position_t& position);
+
+		void hp(int hp);
+
+		void tick();
+
 
 
 	private: //-- private functions --//

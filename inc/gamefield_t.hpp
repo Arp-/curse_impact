@@ -4,6 +4,7 @@
 #define CURSE_IMPACT_GAMEFIELD_HPP
 
 #include <vector>
+#include <deque>
 #include <memory>
 #include "ship_t.hpp"
 #include "bullet_t.hpp"
@@ -14,8 +15,8 @@ class gamefield_t {
 
 	public: 
 
-		using ship_list_t = std::vector<ship_t>;
-		using bullet_list_t = std::vector<bullet_t>;
+		using ship_list_t = std::deque<ship_t>;
+		using bullet_list_t = std::deque<bullet_t>;
 
 	public: //-- public functions --//
 
@@ -36,9 +37,9 @@ class gamefield_t {
 
 		const ship_t& ship() const;
 
-		const std::vector<ship_t>& enemy_list() const;
+		const ship_list_t& enemy_list() const;
 
-		const std::vector<bullet_t>& bullet_list() const;
+		const bullet_list_t& bullet_list() const;
 
 		const rect_t& rect() const;
 
@@ -47,6 +48,12 @@ class gamefield_t {
 		void ship_shoot();
 
 		void bullet_list_tick();
+
+		void add_enemy(const ship_t& enemy);
+
+		void enemy_list_tick();
+
+		void hitcheck();
 
 
 	private: //-- private stuff --// 

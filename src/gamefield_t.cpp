@@ -21,6 +21,25 @@ static bool is_ship_in_bound(
 	return true;
 }
 //-----------------------------------------------------------------------------//
+static bool is_position_in_bound(
+		const rect_t& gf_rect, const position_t& position) {
+	
+	if (gf_rect.width_ < position.x_) {
+		return false;
+	}
+	if (gf_rect.height_ < position.y_) {
+		return false;
+	}
+	if (position.x_ < 0) {
+		return false;
+	}
+	if (position.y_ < 0) {
+		return false;
+	}
+
+	return true;
+}
+//-----------------------------------------------------------------------------//
 gamefield_t::gamefield_t(rect_t rect): rect_(rect) {
 
 }
@@ -46,7 +65,7 @@ gamefield_t::rect() const {
 }
 //-----------------------------------------------------------------------------//
 namespace impl {
-	// IMPORTANT NOTE!!! This is why you shouldn't always use templates
+	// IMPORTANT NOTE!!! This is why I shouldn't always use templates
 	// it was a nice finger training though
 	enum class dim_t {
 		X,
@@ -146,8 +165,87 @@ gamefield_t::bullet_list_tick() {
 	for (auto& bullet : this->bullet_list_) {
 		bullet.tick();
 	}
+	// remove last element if out of bounds;
+	// have to copy because the pop would make a dnalging reference
+	// and it looks like thats why i segfault
+	// or maybe not
+	if (!this->bullet_list_.empty()) {
+		auto last_pos = this->bullet_list_.front().position();
+		if (!is_position_in_bound(this->rect_, last_pos)) {
+			this->bullet_list_.pop_front();
+		}
+	}
 }
+//-----------------------------------------------------------------------------//
+void 
+gamefield_t::add_enemy(const ship_t& enemy) {
+	this->enemy_list_.push_back(enemy);
+}
+//-----------------------------------------------------------------------------//
+void
+gamefield_t::enemy_list_tick() {
+	for (auto& ship : this->enemy_list_) {
+		ship.tick();
+	}
 
+	if (!this->enemy_list_.empty()) {
+		const auto& last_ship = this->enemy_list_.front();
+		if (!is_ship_in_bound(this->rect_, last_ship.position(), last_ship.rect())) {
+			this->enemy_list_.pop_front();
+		}
+	}
+}
+//-----------------------------------------------------------------------------//
+static bool is_bullet_in_rect(const position_t& bullet_pos, 
+		const position_t& rect_pos, const rect_t& rect) {
+		
+	if (bullet_pos.x_ >= rect_pos.x_ + rect.width_) {
+		return false;
+	}
+	if (bullet_pos.y_ >= rect_pos.y_ + rect.height_) {
+		return false;
+	}
+	if (bullet_pos.y_ < rect_pos.y_) {
+		return false;
+	}
+	if (bullet_pos.x_ < rect_pos.x_) {
+		return false;
+	}
+	return true;
+}
+//-----------------------------------------------------------------------------//
+void
+gamefield_t::hitcheck() {
+	// should check collision agains walls,
+	// should check collision against enemies;
+	// should check collision against bullets;
+	std::vector<bullet_list_t::iterator> bullets_to_delete;
+	std::vector<ship_list_t::iterator> enemies_to_delete;
+
+	for (auto it = this->enemy_list_.begin();
+			it != this->enemy_list_.end(); ++it) {
+
+		for (auto bullet_it = this->bullet_list_.begin();
+				bullet_it != this->bullet_list_.end(); ++bullet_it) {
+			
+			if (is_bullet_in_rect(bullet_it->position(),
+						it->position(), it->rect())) {
+				bullets_to_delete.push_back(bullet_it);
+				it->hp_decrement();
+				if (it->hp() <= 0) {
+					enemies_to_delete.push_back(it);
+				}
+			}
+		}
+	}
+
+	for (auto it : bullets_to_delete) {
+		this->bullet_list_.erase(it);
+	}
+	for (auto it : enemies_to_delete) {
+		this->enemy_list_.erase(it);
+	}
+}
 
 
 
