@@ -23,6 +23,8 @@ class ship_t {
 		
 		const position_t& position() const;
 
+		int speed() const;
+
 		void position(const position_t& position);
 
 
@@ -33,6 +35,8 @@ class ship_t {
 		rect_t rect_;
 
 		int speed_;
+
+		int hp_;
 
 };
 

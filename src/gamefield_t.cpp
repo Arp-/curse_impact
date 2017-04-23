@@ -73,9 +73,10 @@ namespace impl {
 	};
 
 
-	template <instruction_t inst_V, impl::dim_t dim_V, impl::sign_t sign_V>
+	template <instruction_t::movement_t inst_V,
+					 impl::dim_t dim_V, impl::sign_t sign_V>
 	inline void move_helper(
-			const rect_t& gf_rect, ship_t& ship, instruction_t inst) {
+			const rect_t& gf_rect, ship_t& ship, instruction_t::movement_t inst) {
 
 		const auto& sh_pos = ship.position();
 		const auto& sh_rect = ship.rect();
@@ -94,15 +95,17 @@ void
 gamefield_t::move_ship(instruction_t instruction) {
 	//const auto& sh_pos = this->ship_.position();
 	//const auto& sh_rect = this->ship_.rect();
+	using movement_t = instruction_t::movement_t;
+	auto movement = instruction.movement;
 
-	impl::move_helper<instruction_t::UP, impl::dim_t::Y, impl::sign_t::MINUS>(
-			this->rect_, this->ship_, instruction);
-	impl::move_helper<instruction_t::DOWN, impl::dim_t::Y, impl::sign_t::PLUS>(
-			this->rect_, this->ship_, instruction);
-	impl::move_helper<instruction_t::FORWARD, impl::dim_t::X, impl::sign_t::PLUS>(
-			this->rect_, this->ship_, instruction);
-	impl::move_helper<instruction_t::BACKWARD, impl::dim_t::X, impl::sign_t::MINUS>(
-			this->rect_, this->ship_, instruction);
+	impl::move_helper<movement_t::UP, impl::dim_t::Y, impl::sign_t::MINUS>(
+			this->rect_, this->ship_, movement);
+	impl::move_helper<movement_t::DOWN, impl::dim_t::Y, impl::sign_t::PLUS>(
+			this->rect_, this->ship_, movement);
+	impl::move_helper<movement_t::FORWARD, impl::dim_t::X, impl::sign_t::PLUS>(
+			this->rect_, this->ship_, movement);
+	impl::move_helper<movement_t::BACKWARD, impl::dim_t::X, impl::sign_t::MINUS>(
+			this->rect_, this->ship_, movement);
 	//if (instruction_t::UP == instruction) { 
 	//	auto pos = { sh_pos.x_, sh_pos.y_-1 };
 	//	if (is_ship_in_bounds(this->rect_, pos, sh_rect)) {
@@ -126,3 +129,25 @@ gamefield_t::move_ship(instruction_t instruction) {
 	//}
 
 }
+//-----------------------------------------------------------------------------//
+void
+gamefield_t::ship_shoot() {
+	const auto& ship_pos = this->ship_.position();
+	const auto& ship_rect = this->ship_.rect();
+	bullet_t bullet { ship_pos.x_ + ship_rect.width_ +1,
+		ship_pos.y_ + (ship_rect.height_ >> 1), this->ship_.speed() +1 };
+	this->bullet_list_.push_back(bullet);
+}
+//-----------------------------------------------------------------------------//
+void 
+gamefield_t::bullet_list_tick() {
+	// given a tick in the timer the list will move forward according to it's
+	// speed
+	for (auto& bullet : this->bullet_list_) {
+		bullet.tick();
+	}
+}
+
+
+
+

@@ -12,8 +12,10 @@
 
 class gamefield_t {
 
-	using ship_list_t = std::vector<ship_t>;
-	using bullet_list_t = std::vector<bullet_t>;
+	public: 
+
+		using ship_list_t = std::vector<ship_t>;
+		using bullet_list_t = std::vector<bullet_t>;
 
 	public: //-- public functions --//
 
@@ -41,6 +43,10 @@ class gamefield_t {
 		const rect_t& rect() const;
 
 		void move_ship(instruction_t instruction);
+
+		void ship_shoot();
+
+		void bullet_list_tick();
 
 
 	private: //-- private stuff --// 

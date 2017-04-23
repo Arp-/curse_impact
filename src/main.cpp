@@ -9,10 +9,11 @@
 
 #define MOVEMENT_TICK 1
 
-using texture_t = std::array<std::array<char, 3>, 3>;
+using ship_texture_t = std::array<std::array<char, 3>, 3>;
+using bullet_texture_t = char;
 
 //-----------------------------------------------------------------------------//
-static void render_ship(const ship_t& ship, const texture_t& texture) {
+static void render_ship(const ship_t& ship, const ship_texture_t& texture) {
 	const auto& rect =  ship.rect();
 	const auto& position = ship.position();
 
@@ -38,7 +39,7 @@ static void render_gamefield(const gamefield_t& gamefield) {
 	}
 
 	const auto& ship = (gamefield.ship());
-	texture_t t = {{
+	ship_texture_t t = {{
 			{ 'Y', 'Y', 'Y'},
 			{ 'Y', 'Y', 'Y'},
 			{ 'Y', 'Y', 'Y'},
@@ -49,38 +50,77 @@ static void render_gamefield(const gamefield_t& gamefield) {
 }
 //-----------------------------------------------------------------------------//
 static instruction_t get_instruction() {
-	int move = getch();
-	switch (move) {
-		case 'i':
-			return instruction_t::UP;
-		case 'k': 
-			return instruction_t::DOWN;
-		case 'j':
-			return instruction_t::BACKWARD;
-		case 'l':
-			return instruction_t::FORWARD;
-		case ' ':
-			return instruction_t::SHOOT;
-	}
+	using movement_t = instruction_t::movement_t;
+	using attack_t = instruction_t::attack_t;
 
-	return instruction_t::NOP;
+	instruction_t instr;
+	instr.movement = movement_t::NOP;
+	instr.attack = attack_t::NOP;
+
+	char ch = 0;
+	do {
+		ch = getch();
+		switch (ch) {
+			case 'k':
+				instr.movement = movement_t::UP;
+				break;
+			case 'j': 
+				instr.movement = movement_t::DOWN;
+				break;
+			case 'h':
+				instr.movement = movement_t::BACKWARD;
+				break;
+			case 'l':
+				instr.movement =  movement_t::FORWARD;
+				break;
+		}
+		switch (ch) {
+			case ' ':
+				instr.attack = attack_t::SHOOT;
+				break;
+		}
+	} while (ERR != ch);
+
+	return instr;
 }
 //-----------------------------------------------------------------------------//
 static void render_movement(gamefield_t& gf, instruction_t instruction) {
-	texture_t clear_texture = {{
+	ship_texture_t clear_texture = {{
 		{ ' ', ' ', ' ' },
 		{ ' ', ' ', ' ' },
 		{ ' ', ' ', ' ' },
 	}};
-	texture_t ship_texture  = {{
-			{ 'Y', 'Y', 'Y'},
-			{ 'Y', 'Y', 'Y'},
-			{ 'Y', 'Y', 'Y'},
+	ship_texture_t ship_texture  = {{
+			{ '|', '\\', ' '},
+			{ '}', ']', '>'},
+			{ '|', '/', ' '},
 	}};
 	const auto& ship = gf.ship();
 	render_ship(ship, clear_texture);
 	gf.move_ship(instruction);
 	render_ship(ship, ship_texture);
+}
+//-----------------------------------------------------------------------------//
+static void render_bullet_list(const gamefield_t::bullet_list_t& bullet_list, const char texture) {
+	for (const auto& bullet : bullet_list) {
+		const auto& position = bullet.position();
+		mvaddch(position.y_, position.x_, texture);
+	}
+}
+//-----------------------------------------------------------------------------//
+static void render_shoot(gamefield_t& gf, instruction_t instruction) {
+
+	render_bullet_list(gf.bullet_list(), ' ');
+	gf.bullet_list_tick();
+	if (instruction.attack == instruction_t::attack_t::SHOOT) {
+		// Add the bullet to the bullet list with the ending of the current ship
+		gf.ship_shoot();
+	}
+	render_bullet_list(gf.bullet_list(), '-');
+}
+//-----------------------------------------------------------------------------//
+static void flush_input_queue() {
+	while (ERR != getch());
 }
 //-----------------------------------------------------------------------------//
 int main() {
@@ -93,14 +133,22 @@ int main() {
 
 	initscr();
 	noecho();
+	//halfdelay(10);
+	cbreak();
+	timeout(0);
 
 	render_gamefield(gf);
 	sleep(1);
 
 	while (true) {
 		instruction_t instruction = get_instruction();
+		move(1,1);
+		printw("instruction %02X, %02X", (int)instruction.movement, (int)instruction.attack );
+		render_shoot(gf, instruction);
 		render_movement(gf, instruction);
 		refresh();
+//		flush_input_queue();
+		usleep(100000);
 	}
 
 	endwin();
