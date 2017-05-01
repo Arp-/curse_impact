@@ -1,7 +1,18 @@
 
 #include "ship_t.hpp"
 
+static int last_id_ = 0;
+//-----------------------------------------------------------------------------//
+ship_t::ship_t():
+	position_(),
+	rect_(),
+	speed_(0),
+	hp_(1),
+	id_(last_id_++) 
+{
 
+}
+//-----------------------------------------------------------------------------//
 ship_t::ship_t(
 		position_t pos,
 		rect_t rect,
@@ -9,7 +20,8 @@ ship_t::ship_t(
 	position_(pos),
 	rect_(rect),
 	speed_(speed),
-	hp_(1)
+	hp_(1),
+	id_(last_id_++)
 {
 
 }
@@ -22,7 +34,8 @@ ship_t::ship_t(
 	position_(pos),
 	rect_(rect),
 	speed_(speed),
-	hp_(hp)
+	hp_(hp),
+	id_(last_id_++)
 {
 
 }
@@ -45,6 +58,11 @@ ship_t::speed() const {
 int
 ship_t::hp() const {
 	return this->hp_;
+}
+//-----------------------------------------------------------------------------//
+int
+ship_t::id() const {
+	return this->id_;
 }
 //-----------------------------------------------------------------------------//
 void

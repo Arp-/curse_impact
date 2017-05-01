@@ -11,8 +11,10 @@
 
 using ship_texture_t = std::array<std::array<char, 3>, 3>;
 using bullet_texture_t = char;
-
 //-----------------------------------------------------------------------------//
+// STATIC CONSTANTS
+//-----------------------------------------------------------------------------//
+// FUNCTIONS FOR RENDERING
 static void render_ship(const ship_t& ship, const ship_texture_t& texture) {
 	const auto& rect =  ship.rect();
 	const auto& position = ship.position();
@@ -89,44 +91,6 @@ static instruction_t get_instruction() {
 	return instr;
 }
 //-----------------------------------------------------------------------------//
-static void render_enemy_list(gamefield_t& gf) {
-	ship_texture_t clear_texture = {{
-		{ ' ', ' ', ' ' },
-		{ ' ', ' ', ' ' },
-		{ ' ', ' ', ' ' },
-	}};
-	ship_texture_t ship_texture  = {{
-		{ ' ', 'e', ' ' },
-		{ 'e', 'e', 'e' },
-		{ ' ', 'e', ' ' },
-	}};
-	for (const auto& ship : gf.enemy_list()) {
-		render_ship(ship, clear_texture);
-	}
-	gf.enemy_list_tick();
-	for (const auto& ship : gf.enemy_list()) {
-		render_ship(ship, ship_texture);
-	}
-}
-//-----------------------------------------------------------------------------//
-static void render_movement(gamefield_t& gf, instruction_t instruction) {
-	ship_texture_t clear_texture = {{
-		{ ' ', ' ', ' ' },
-		{ ' ', ' ', ' ' },
-		{ ' ', ' ', ' ' },
-	}};
-	ship_texture_t ship_texture  = {{
-			{ '|', '\\', ' '},
-			{ '}', ']', '>'},
-			{ '|', '/', ' '},
-	}};
-	const auto& ship = gf.ship();
-	render_ship(ship, clear_texture);
-	gf.move_ship(instruction);
-	render_ship(ship, ship_texture);
-	render_enemy_list(gf);
-}
-//-----------------------------------------------------------------------------//
 static void render_bullet_list(const gamefield_t::bullet_list_t& bullet_list, const char texture) {
 	for (const auto& bullet : bullet_list) {
 		const auto& position = bullet.position();
@@ -134,15 +98,50 @@ static void render_bullet_list(const gamefield_t::bullet_list_t& bullet_list, co
 	}
 }
 //-----------------------------------------------------------------------------//
-static void render_shoot(gamefield_t& gf, instruction_t instruction) {
-
+static void render_ship_list(const gamefield_t::ship_list_t& ship_list, 
+		const ship_texture_t& texture) {
+	for (const auto& ship : ship_list) {
+		render_ship(ship, texture);
+	}
+}
+//-----------------------------------------------------------------------------//
+static void render_clean(gamefield_t& gf) {
+	static constexpr ship_texture_t clear_texture = {{
+		{ ' ', ' ', ' ' },
+		{ ' ', ' ', ' ' },
+		{ ' ', ' ', ' ' },
+	}};
+	const auto& ship = gf.ship();
+	render_ship(ship, clear_texture);
 	render_bullet_list(gf.bullet_list(), ' ');
+	render_ship_list(gf.enemy_list(), clear_texture);
+}
+//-----------------------------------------------------------------------------//
+static void game_logic(gamefield_t& gf, instruction_t instruction) {
+	gf.move_ship(instruction);
 	gf.bullet_list_tick();
+	gf.enemy_list_tick();
 	if (instruction.attack == instruction_t::attack_t::SHOOT) {
-		// Add the bullet to the bullet list with the ending of the current ship
 		gf.ship_shoot();
 	}
+	gf.hitcheck();
+}
+//-----------------------------------------------------------------------------//
+static void render(gamefield_t& gf) {
+
+	static constexpr ship_texture_t enemy_texture = {{
+		{ ' ', 'e', ' ' },
+		{ 'e', 'e', 'e' },
+		{ ' ', 'e', ' ' },
+	}};
+	static constexpr ship_texture_t ship_texture = {{
+		{ ' ', '|', ' ' },
+		{ '|', 'K', '>' },
+		{ ' ', '|', ' ' },
+	}};
+	render_ship(gf.ship(), ship_texture);
 	render_bullet_list(gf.bullet_list(), '-');
+	render_ship_list(gf.enemy_list(), enemy_texture);
 }
 //-----------------------------------------------------------------------------//
 int main() {
@@ -159,7 +158,7 @@ int main() {
 	timeout(0);
 
 
-	ship_t enemy {{ 10, 10 }, { 3, 3 }, 0, 10};
+	ship_t enemy {{ 60, 10 }, { 3, 3 }, -1, 10};
 	gf.add_enemy(enemy);
 	render_gamefield(gf);
 
@@ -170,9 +169,9 @@ int main() {
 		}
 		move(1,1);
 		printw("instruction %02X, %02X", (int)instruction.movement, (int)instruction.attack );
-		render_shoot(gf, instruction);
-		render_movement(gf, instruction);
-		gf.hitcheck();
+		render_clean(gf);
+		game_logic(gf, instruction);
+		render(gf);
 		refresh();
 		usleep(100000);
 	}

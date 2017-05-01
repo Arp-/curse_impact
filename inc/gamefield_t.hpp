@@ -58,7 +58,7 @@ class gamefield_t {
 
 	private: //-- private stuff --// 
 
-		int time_;
+//		int time_;
 
 		rect_t rect_;
 

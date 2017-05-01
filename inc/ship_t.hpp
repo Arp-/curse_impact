@@ -11,7 +11,7 @@ class ship_t {
 
 	public: //-- public functions --//
 
-		ship_t() = default;
+		ship_t();
 
 		ship_t(position_t pos, rect_t rect, int speed);
 
@@ -24,6 +24,8 @@ class ship_t {
 		const rect_t& rect() const;
 		
 		const position_t& position() const;
+
+		int id() const;
 
 		int speed() const;
 
@@ -48,6 +50,8 @@ class ship_t {
 		int speed_;
 
 		int hp_;
+
+		int id_;
 
 };
 
