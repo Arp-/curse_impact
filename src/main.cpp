@@ -5,6 +5,8 @@
 #include <ncurses.h>
 #include <unistd.h>
 #include "instruction_t.hpp"
+#include "pugixml/pugixml.hpp"
+#include "script_t.hpp"
 
 
 #define MOVEMENT_TICK 1
@@ -144,7 +146,7 @@ static void render(gamefield_t& gf) {
 	render_ship_list(gf.enemy_list(), enemy_texture);
 }
 //-----------------------------------------------------------------------------//
-int main() {
+static void game() {
 
 	gamefield_t gf({100,40});
 	gf.set_ship(
@@ -178,5 +180,23 @@ int main() {
 
 	nocbreak();
 	endwin();
-	return 0;
+
+}
+//-----------------------------------------------------------------------------//
+
+int main() {
+
+	//pugi::xml_document doc;
+	//pugi::xml_parse_result result = doc.load_file("res/game_script.xml");
+	//std::cout << "Load result: " << result.description() << std::endl;
+
+	//std::cout << "hp: " << doc.child("level").child("enemy").attribute("hp").value() << std::endl;
+
+
+	//game();
+	
+	gamefield_t gf({100,40});
+	script_t script { gf };
+	script.read_xml("res/game_script.xml");
+
 }
