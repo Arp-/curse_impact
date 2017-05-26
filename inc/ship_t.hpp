@@ -13,9 +13,7 @@ class ship_t {
 
 		ship_t();
 
-		ship_t(position_t pos, rect_t rect, int speed);
-
-		ship_t(position_t pos, rect_t rect, int speed, int hp);
+		ship_t(position_t pos, rect_t rect, int speed, int hp, int id);
 
 		ship_t(const ship_t& ship) = default;
 

@@ -27,6 +27,11 @@ class script_t {
 		void tick();
 
 
+	private: //-- private functions --//
+
+		event_t get_event_from_ship_node(const pugi::xml_node&);
+
+
 	private: //-- private --//
 
 		history_t history_;

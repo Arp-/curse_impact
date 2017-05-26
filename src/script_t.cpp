@@ -1,13 +1,60 @@
 
 #include "pugixml/pugixml.hpp"
 #include "script_t.hpp"
+#include "util.hpp"
 #include <iostream>
 
+
+
+static int relatify_divided_value(
+		const gamefield_t& gf, const std::string& val) {
+
+
+	std::array<std::string, 2> str_repr;
+	int index = 0;
+
+	for (const auto& ch : val) {
+		if (util::is_integral_value(ch)) {
+			str_repr[index].push_back(ch);
+		} else {
+			index++;
+		}
+	}
+	return std::stoi(str_repr[0]) / std::stoi(str_repr[1]);
+}
+//-----------------------------------------------------------------------------//
+static void set_relative_position(
+		const gamefield_t& gf, position_t& pos, const pugi::xml_node& node) {
+
+	std::string x_repr = node.attribute("x").value();
+	if (util::is_divisible_format(x_repr)) {
+		pos.x_ = relatify_divided_value(gf, x_repr);
+	} else if (util::is_integral_format(x_repr)) {
+		pos.x_ = std::stoi(x_repr);
+	}
+
+	std::string y_repr = node.attribute("y").value();
+	if (util::is_divisible_format(y_repr)) {
+		pos.y_ = relatify_divided_value(gf, y_repr);
+	} else if (util::is_integral_format(x_repr)) {
+		pos.y_ = std::stoi(y_repr);
+	}
+
+	pos.y_ = atoi(node.attribute("y").value());
+	if (pos.x_ < 0) {
+		pos.x_ = gf.rect().width_ + pos.x_;
+	}
+	if (pos.y_ < 0) {
+		pos.y_ = gf.rect().height_ + pos.y_;
+	}
+}
+//-----------------------------------------------------------------------------//
 static void print_history(const script_t::history_t& hist) {
 		for (const auto& ev_list : hist) {
 			std::cout << "time: " << ev_list.first << " ";
 			for (const auto& ev : ev_list.second) {
 				std::cout << "id: " << ev.id_ << " ";
+				std::cout << "position.x_: " << ev.position_.x_ << " ";
 				if (ev.type_ == event_t::type::ATTACK) {
 					std::cout << "ATTACK";
 				} else if (ev.type_ == event_t::type::APPEAR) {
@@ -23,14 +70,14 @@ static void print_history(const script_t::history_t& hist) {
 		}
 }
 //-----------------------------------------------------------------------------//
-static event_t get_event_from_ship_node(const pugi::xml_node& node) {
+event_t 
+script_t::get_event_from_ship_node(const pugi::xml_node& node) {
 	static int ship_id_counter = 1;
 	event_t event;
 	event.id_ = ship_id_counter++;
 	event.type_ = event_t::type::APPEAR;
 	event.hp_ = atoi(node.attribute("hp").value());
-	event.position_.x_ = atoi(node.attribute("x").value());
-	event.position_.y_ = atoi(node.attribute("y").value());
+	set_relative_position(this->gamefield_, event.position_, node);
 	event.speed_ = atoi(node.attribute("speed").value());
 
 	return event;
@@ -110,7 +157,12 @@ script_t::tick() {
 
 	const auto& ev_list = this->history_[this->time_];
 	for (const auto& ev : ev_list) {
-		
+		if (ev.type_ == event_t::type::APPEAR) {
+			ship_t enemy { ev.position_, { 3, 3 }, ev.speed_, ev.hp_, ev.id_};
+			this->gamefield_.add_enemy(enemy);
+		} else if (ev.type_ == event_t::type::MOVEMENT) {
+
+		}
 	}
 
 }

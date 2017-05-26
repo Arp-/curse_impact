@@ -149,9 +149,13 @@ static void render(gamefield_t& gf) {
 static void game() {
 
 	gamefield_t gf({100,40});
+	script_t script { gf };
+	script.read_xml("res/game_script.xml");
 	gf.set_ship(
 			position_t {3,3},
 			rect_t {3,3},
+			0,
+			0,
 			0);
 
 	initscr();
@@ -160,8 +164,8 @@ static void game() {
 	timeout(0);
 
 
-	ship_t enemy {{ 60, 10 }, { 3, 3 }, -1, 10};
-	gf.add_enemy(enemy);
+	//ship_t enemy {{ 60, 10 }, { 3, 3 }, -1, 10};
+	//gf.add_enemy(enemy);
 	render_gamefield(gf);
 
 	while (true) {
@@ -172,6 +176,7 @@ static void game() {
 		move(1,1);
 		printw("instruction %02X, %02X", (int)instruction.movement, (int)instruction.attack );
 		render_clean(gf);
+		script.tick();
 		game_logic(gf, instruction);
 		render(gf);
 		refresh();
@@ -193,10 +198,10 @@ int main() {
 	//std::cout << "hp: " << doc.child("level").child("enemy").attribute("hp").value() << std::endl;
 
 
-	//game();
+	game();
 	
-	gamefield_t gf({100,40});
-	script_t script { gf };
-	script.read_xml("res/game_script.xml");
+	//gamefield_t gf({100,40});
+	//script_t script { gf };
+	//script.read_xml("res/game_script.xml");
 
 }
