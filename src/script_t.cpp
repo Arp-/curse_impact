@@ -2,10 +2,26 @@
 #include "pugixml/pugixml.hpp"
 #include "script_t.hpp"
 #include "util.hpp"
+#include "error.hpp"
 #include <iostream>
 
+enum class dimension {
+	X,
+	Y,
+};
 
-
+template <dimension dim_V>
+static auto get_dimension(const gamefield_t& gf);
+template <>
+auto get_dimension<dimension::X>(const gamefield_t& gf) {
+	return gf.rect().width_;
+}
+template <>
+auto get_dimension<dimension::Y>(const gamefield_t& gf) {
+	return gf.rect().height_;
+}
+//-----------------------------------------------------------------------------//
+template <dimension dim_V>
 static int relatify_divided_value(
 		const gamefield_t& gf, const std::string& val) {
 
@@ -20,7 +36,16 @@ static int relatify_divided_value(
 			index++;
 		}
 	}
-	return std::stoi(str_repr[0]) / std::stoi(str_repr[1]);
+	std::cout << " repr[0]: " << str_repr[0] << std::endl;
+	std::cout << " repr[1]: " << str_repr[1] << std::endl;
+	int first = std::stoi(str_repr[0]);
+	int second = std::stoi(str_repr[1]);
+	std::cout << "first: " << first << std::endl;
+	std::cout << "second: " << second << std::endl;
+	
+	int ret =  get_dimension<dim_V>(gf) * first / second;
+	std::cout << "ret : " << ret << std::endl;
+	return ret;
 }
 //-----------------------------------------------------------------------------//
 static void set_relative_position(
@@ -28,19 +53,24 @@ static void set_relative_position(
 
 	std::string x_repr = node.attribute("x").value();
 	if (util::is_divisible_format(x_repr)) {
-		pos.x_ = relatify_divided_value(gf, x_repr);
+		std::cout << "x_was divisible format" << std::endl;
+		pos.x_ = relatify_divided_value<dimension::X>(gf, x_repr);
 	} else if (util::is_integral_format(x_repr)) {
+		std::cout << "x_was integral format" << std::endl;
 		pos.x_ = std::stoi(x_repr);
+	} else { 
+		throw invalid_format_error { x_repr };
 	}
 
 	std::string y_repr = node.attribute("y").value();
 	if (util::is_divisible_format(y_repr)) {
-		pos.y_ = relatify_divided_value(gf, y_repr);
+		std::cout << "y_was divisible format" << std::endl;
+		pos.y_ = relatify_divided_value<dimension::Y>(gf, y_repr);
 	} else if (util::is_integral_format(x_repr)) {
+		std::cout << "y_was integral format" << std::endl;
 		pos.y_ = std::stoi(y_repr);
 	}
 
-	pos.y_ = atoi(node.attribute("y").value());
 	if (pos.x_ < 0) {
 		pos.x_ = gf.rect().width_ + pos.x_;
 	}
@@ -55,6 +85,7 @@ static void print_history(const script_t::history_t& hist) {
 			for (const auto& ev : ev_list.second) {
 				std::cout << "id: " << ev.id_ << " ";
 				std::cout << "position.x_: " << ev.position_.x_ << " ";
+				std::cout << "position.y_: " << ev.position_.y_ << " ";
 				if (ev.type_ == event_t::type::ATTACK) {
 					std::cout << "ATTACK";
 				} else if (ev.type_ == event_t::type::APPEAR) {

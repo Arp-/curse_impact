@@ -35,8 +35,10 @@ namespace util {
 
 	template <typename string_T>
 	bool is_integral_format(const string_T& str) {
-		for (auto ch : str) {
-			if (!is_integral_value(ch)) {
+		auto it = str.begin();
+		if (*it == '-' || *it == '+') { ++it; } // ship sign
+		for (;it != str.end(); ++it) {
+			if (!is_integral_value(*it)) {
 				return false;
 			}
 		}
@@ -46,6 +48,7 @@ namespace util {
 	template <typename string_T>
 	bool is_divisible_format(const string_T& str) {
 		auto it = str.begin();
+		if (*it == '-' || *it == '+') { ++it; } // ship sign
 		for (; it != str.end() && is_integral_value(*it); ++it);
 		if (it == str.end() || *it != '/' ) {
 			return false;
