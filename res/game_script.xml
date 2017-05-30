@@ -1,0 +1,27 @@
+
+
+<level>
+
+	<texture res="./res/texture/enemy_A" id="enemy_A" />
+
+	<texture res="./res/texture/enemy_B" id="enemy_B" />
+
+	<enemy time="10" hp="1" x="-3" y="0/6" speed="-1" texture_ref="enemy_A" />
+
+	<enemy time="15" hp="1" x="-3" y="1/6" speed="-1" texture_ref="enemy_A" />
+
+	<enemy time="20" hp="1" x="-3" y="2/6" speed="-1" />
+
+	<enemy time="25" hp="1" x="-3" y="3/6" speed="-1" />
+
+	<enemy time="30" hp="1" x="-3" y="4/6" speed="-1" />
+
+	<enemy time="35" hp="1" x="-3" y="5/6" speed="-1" />
+
+	<enemy time="40" hp="1" x="-3" y="4/6" speed="-1" />
+
+	<enemy time="45" hp="1" x="-3" y="3/6" speed="-1" />
+
+	<enemy time="50" hp="1" x="-3" y="2/6" speed="-2" />
+
+</level>

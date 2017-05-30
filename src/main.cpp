@@ -7,6 +7,7 @@
 #include "instruction_t.hpp"
 #include "pugixml/pugixml.hpp"
 #include "script_t.hpp"
+#include "texture_t.hpp"
 
 
 #define MOVEMENT_TICK 1
@@ -17,6 +18,16 @@ using bullet_texture_t = char;
 // STATIC CONSTANTS
 //-----------------------------------------------------------------------------//
 // FUNCTIONS FOR RENDERING
+static void print_texture(const texture_t& texture) {
+	const auto& cont = texture.matrix();
+	for (const auto& row : cont) {
+		for (const auto& elem : row) {
+			putc(elem, stdout);
+		}
+		putc('\n',stdout);
+	}
+}
+//-----------------------------------------------------------------------------//
 static void render_ship(const ship_t& ship, const ship_texture_t& texture) {
 	const auto& rect =  ship.rect();
 	const auto& position = ship.position();
@@ -38,7 +49,7 @@ static void render_gamefield(const gamefield_t& gamefield) {
 		mvaddch(rect.height_-1, i, 'X');
 	}
 	for (int i = 0; i < rect.height_; i++) {
-		mvaddch(i,0, 'X');
+		mvaddch(i, 0, 'X');
 		mvaddch(i, rect.width_-1, 'X');
 	}
 
@@ -148,7 +159,7 @@ static void render(gamefield_t& gf) {
 //-----------------------------------------------------------------------------//
 static void game() {
 
-	gamefield_t gf({100,40});
+	gamefield_t gf({140,40});
 	script_t script { gf };
 	script.read_xml("res/game_script.xml");
 	gf.set_ship(
@@ -166,7 +177,7 @@ static void game() {
 
 	//ship_t enemy {{ 60, 10 }, { 3, 3 }, -1, 10};
 	//gf.add_enemy(enemy);
-	render_gamefield(gf);
+	//render_gamefield(gf);
 
 	while (true) {
 		instruction_t instruction = get_instruction();
@@ -189,6 +200,8 @@ static void game() {
 }
 //-----------------------------------------------------------------------------//
 
+
+
 int main() {
 
 	//pugi::xml_document doc;
@@ -198,8 +211,18 @@ int main() {
 	//std::cout << "hp: " << doc.child("level").child("enemy").attribute("hp").value() << std::endl;
 
 
-	game();
-	
+	//game();
+	//
+	texture_t textureA = texture_t::read_from_file("./res/texture/enemy_A.txt");
+	print_texture(textureA);
+	texture_t textureB = texture_t::read_from_file("./res/texture/enemy_B.txt");
+	print_texture(textureB);
+	putc(textureB.matrix()[0][0], stdout);
+	putc(textureB.matrix()[0][1], stdout);
+	putc(textureB.matrix()[0][2], stdout);
+	putc(textureB.matrix()[0][3], stdout);
+	putc(textureB.matrix()[0][4], stdout);
+	putc(textureB.matrix().at(0).at(5), stdout);
 	//gamefield_t gf({100,40});
 	//script_t script { gf };
 	//script.read_xml("res/game_script.xml");
