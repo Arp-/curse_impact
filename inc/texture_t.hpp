@@ -18,6 +18,8 @@ class texture_t {
 
 		texture_t();
 
+		texture_t(const matrix_t& mtx);
+
 		texture_t(const texture_t& texture) = default;
 
 		~texture_t() = default;

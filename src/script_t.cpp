@@ -4,6 +4,7 @@
 #include "util.hpp"
 #include "error.hpp"
 #include <iostream>
+#include <algorithm>
 
 enum class dimension {
 	X,
@@ -148,21 +149,33 @@ script_t::script_t(gamefield_t& gf): gamefield_(gf), time_(0) {
 
 }
 //-----------------------------------------------------------------------------//
-void
-script_t::read_xml(const char* filepath) {
-	pugi::xml_document doc;
-	pugi::xml_parse_result result = doc.load_file(filepath);
-	// looks like i actually don't need to make this a static variable :)
-	if (!result) {
-		throw std::runtime_error("Failed to parse the xml file");
+texture_t&
+script_t::texture_ref_by_name(const std::string& name) {
+	auto it = std::find_if(this->texture_list_.begin(),
+			this->texture_list_.end(), [&name](const auto& pair) {
+				return pair.first == name;
+	});
+	if (it == this->texture_list_.end()) {
+		throw std::out_of_range("element not found");
 	}
-	const auto& root = doc.child("level");
-	for (const auto& ship : root) {
+	return it->second;
+}
+//-----------------------------------------------------------------------------//
+void
+script_t::read_enemy_ship_list(const pugi::xml_node& root) {
+	for (auto ship = root.child("enemy");
+			ship; ship = ship.next_sibling("enemy")) {
+
 		int time = atoi(ship.attribute("time").value());
 		if (!this->history_.count(time)) {
 			this->history_[time] = event_list_t {};
 		}
 		event_t&& ev = get_event_from_ship_node(ship);
+		std::string texture_name = ship.attribute("texture_ref").value();
+		std::cout << "refname: " <<
+			 this->texture_ref_by_name(texture_name).matrix().size() << std::endl;
+		this->texture_ship_association_.emplace(ev.id_,
+				this->texture_ref_by_name(texture_name));
 		this->history_[time].push_back(ev);
 		for (const auto& child : ship) {
 			int offset = atoi(child.attribute("offset").value());
@@ -174,6 +187,34 @@ script_t::read_xml(const char* filepath) {
 			this->history_[offset_time].push_back(ev_child);
 		}
 	}
+}
+//-----------------------------------------------------------------------------//
+void
+script_t::read_texture_list(const pugi::xml_node& root) {
+	for (auto texture = root.child("texture");
+			texture; texture = texture.next_sibling("texture")) {
+
+		std::cout << "ADDING TEXTURE" << std::endl;
+
+		std::string id = texture.attribute("id").value();
+		std::string res = texture.attribute("res").value();
+		std::cout << "RES: " << res << std::endl;
+		texture_t t = texture_t::read_from_file(res);
+		this->texture_list_.push_back({id, t});
+	}
+}
+//-----------------------------------------------------------------------------//
+void
+script_t::read_xml(const char* filepath) {
+	pugi::xml_document doc;
+	pugi::xml_parse_result result = doc.load_file(filepath);
+	// looks like i actually don't need to make this a static variable :)
+	if (!result) {
+		throw std::runtime_error("Failed to parse the xml file");
+	}
+	const auto& root = doc.child("level");
+	read_texture_list(root);
+	read_enemy_ship_list(root);
 
 	// TODO REMOVE FROM PRODUCTION
 	print_history(this->history_);
@@ -195,5 +236,9 @@ script_t::tick() {
 
 		}
 	}
-
+}
+//-----------------------------------------------------------------------------//
+const script_t::texture_ship_assoc_t&
+script_t::texture_ship_assoc() const {
+	return this->texture_ship_association_;
 }

@@ -8,12 +8,19 @@
 
 
 texture_t::texture_t(): matrix_() { 
+
+}
+//-----------------------------------------------------------------------------//
+texture_t::texture_t(const texture_t::matrix_t& mtx):matrix_(mtx) {
+
 }
 //-----------------------------------------------------------------------------//
 texture_t
 texture_t::read_from_file(const std::string& filename) {
 	texture_t texture;
 	std::ifstream in_file(filename);
+	if (!in_file.good()) { 
+		throw std::runtime_error("File `" + filename + "` not found"); }
 
 	int i = 0;
 	while (in_file.good()) {
