@@ -6,7 +6,13 @@
 
 	<texture res="./res/texture/enemy_B.txt" id="enemy_B" />
 
-	<enemy time="10" hp="1" x="-3" y="0/6" speed="-1" texture_ref="enemy_B" />
+	<enemy time="10" hp="1" x="-3" y="0/6" speed="-1" texture_ref="enemy_B" >
+		<move offset="2" direction="down" />
+		<move offset="4" direction="down" />
+		<move offset="4" direction="down" />
+		<move offset="4" direction="down" />
+		<atk offset="6" />
+	</enemy>
 
 	<enemy time="15" hp="1" x="-3" y="1/6" speed="-1" texture_ref="enemy_A" />
 
@@ -23,5 +29,9 @@
 	<enemy time="45" hp="1" x="-3" y="3/6" speed="-1" texture_ref="enemy_A" />
 
 	<enemy time="50" hp="1" x="-3" y="2/6" speed="-2" texture_ref="enemy_A" />
+
+
+
+	<enemy time="100" hp="100" x="-3" y="2/6" speed="0" texture_ref="enemy_B" />
 
 </level>

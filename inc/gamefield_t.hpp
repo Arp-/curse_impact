@@ -10,6 +10,7 @@
 #include "bullet_t.hpp"
 #include "rect_t.hpp"
 #include "instruction_t.hpp"
+#include "event_t.hpp"
 
 class gamefield_t {
 
@@ -45,7 +46,11 @@ class gamefield_t {
 
 		void move_ship(instruction_t instruction);
 
+		void move_enemy(int ship_id, event_t::direction dir);
+
 		void ship_shoot();
+
+		void enemy_shoot(int ship_id);
 
 		void bullet_list_tick();
 
@@ -54,6 +59,11 @@ class gamefield_t {
 		void enemy_list_tick();
 
 		void hitcheck();
+
+
+	private: //-- private functions --//
+
+		ship_list_t::iterator find_enemy(int ship_id);
 
 
 	private: //-- private stuff --// 

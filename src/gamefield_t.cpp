@@ -1,6 +1,7 @@
 
 
 #include "gamefield_t.hpp"
+#include <algorithm>
 
 static bool is_ship_in_bound(
 		const rect_t& gf_rect, const position_t& ship_pos, const rect_t& ship_rect) {
@@ -112,8 +113,6 @@ namespace impl {
 //-----------------------------------------------------------------------------//
 void 
 gamefield_t::move_ship(instruction_t instruction) {
-	//const auto& sh_pos = this->ship_.position();
-	//const auto& sh_rect = this->ship_.rect();
 	using movement_t = instruction_t::movement_t;
 	auto movement = instruction.movement;
 
@@ -125,28 +124,14 @@ gamefield_t::move_ship(instruction_t instruction) {
 			this->rect_, this->ship_, movement);
 	impl::move_helper<movement_t::BACKWARD, impl::dim_t::X, impl::sign_t::MINUS>(
 			this->rect_, this->ship_, movement);
-	//if (instruction_t::UP == instruction) { 
-	//	auto pos = { sh_pos.x_, sh_pos.y_-1 };
-	//	if (is_ship_in_bounds(this->rect_, pos, sh_rect)) {
-	//		this->ship_.move_ship(pos);
-	//	}
-	//} else if (instruction_t::DOWN == instruction) {
-	//	auto pos = { sh_pos.x_, sh_pos.y_+1 };
-	//	if (is_ship_in_bounds(this->rect_, pos, sh_rect)) {
-	//		this->ship_.move_ship(pos);
-	//	}
-	//} else if (instruction_t::BACKWARD == instruction) {
-	//	auto pos = { sh_pos.x_-1, sh_pos.y_ };
-	//	if (is_ship_in_bounds(this->rect_, pos, sh_rect)) {
-	//		this->ship_.move_ship(pos);
-	//	}
-	//} else if (instruction_t::FORWARD == instruction) {
-	//	auto pos = { sh_pos.x_+1, sh_pos.y_ };
-	//	if (is_ship_in_bounds(this->rect_, pos, sh_rect)) {
-	//		this->ship_.move_ship(pos);
-	//	}
-	//}
 
+}
+//-----------------------------------------------------------------------------//
+void
+gamefield_t::move_enemy(int ship_id, event_t::direction dir) {
+	auto it = this->find_enemy(ship_id);
+	if (it == this->enemy_list_.end()) { return; }
+	it->move(dir);
 }
 //-----------------------------------------------------------------------------//
 void
@@ -155,6 +140,17 @@ gamefield_t::ship_shoot() {
 	const auto& ship_rect = this->ship_.rect();
 	bullet_t bullet { ship_pos.x_ + ship_rect.width_ +1,
 		ship_pos.y_ + (ship_rect.height_ >> 1), this->ship_.speed() +1 };
+	this->bullet_list_.push_back(bullet);
+}
+//-----------------------------------------------------------------------------//
+void
+gamefield_t::enemy_shoot(int ship_id) {
+	auto it = find_enemy(ship_id);
+	if (it == this->enemy_list_.end()) { return; }
+	const auto& ship_pos = it->position();
+	const auto& ship_rect = it->rect();
+	bullet_t bullet { ship_pos.x_ - 1,
+		ship_pos.y_ + (ship_rect.height_ >> 1), it->speed() -1 };
 	this->bullet_list_.push_back(bullet);
 }
 //-----------------------------------------------------------------------------//
@@ -222,12 +218,13 @@ gamefield_t::hitcheck() {
 	std::vector<bullet_list_t::iterator> bullets_to_delete;
 	std::vector<ship_list_t::iterator> enemies_to_delete;
 
-	for (auto it = this->enemy_list_.begin();
-			it != this->enemy_list_.end(); ++it) {
 
-		for (auto bullet_it = this->bullet_list_.begin();
-				bullet_it != this->bullet_list_.end(); ++bullet_it) {
-			
+	for (auto bullet_it = this->bullet_list_.begin();
+			bullet_it != this->bullet_list_.end(); ++bullet_it) {
+
+		for (auto it = this->enemy_list_.begin();
+				it != this->enemy_list_.end(); ++it) {
+
 			if (is_bullet_in_rect(bullet_it->position(),
 						it->position(), it->rect())) {
 				bullets_to_delete.push_back(bullet_it);
@@ -245,6 +242,12 @@ gamefield_t::hitcheck() {
 	for (auto it : enemies_to_delete) {
 		this->enemy_list_.erase(it);
 	}
+}
+//-----------------------------------------------------------------------------//
+gamefield_t::ship_list_t::iterator
+gamefield_t::find_enemy(int ship_id) {
+	return std::find_if(this->enemy_list_.begin(), this->enemy_list_.end(),
+			[ship_id](const ship_t& ship) { return ship.id() == ship_id; });
 }
 
 

@@ -5,6 +5,7 @@
 
 #include "rect_t.hpp"
 #include "position_t.hpp"
+#include "event_t.hpp"
 
 
 class ship_t {
@@ -34,6 +35,8 @@ class ship_t {
 		void position(const position_t& position);
 
 		void hp(int hp);
+
+		void move(event_t::direction dir);
 
 		void tick();
 

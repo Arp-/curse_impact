@@ -22,6 +22,16 @@ auto get_dimension<dimension::Y>(const gamefield_t& gf) {
 	return gf.rect().height_;
 }
 //-----------------------------------------------------------------------------//
+static const ship_t* ship_by_id(const gamefield_t::ship_list_t& ship_list, int id) {
+	auto it = (std::find_if(ship_list.begin(), ship_list.end(), 
+				[id](const ship_t& ship) { return ship.id() == id; }));
+
+	if (it == ship_list.end()) {
+		return nullptr;
+	}
+	return &(*it);
+}
+//-----------------------------------------------------------------------------//
 template <dimension dim_V>
 static int relatify_divided_value(
 		const gamefield_t& gf, const std::string& val) {
@@ -233,7 +243,9 @@ script_t::tick() {
 			ship_t enemy { ev.position_, { 3, 3 }, ev.speed_, ev.hp_, ev.id_};
 			this->gamefield_.add_enemy(enemy);
 		} else if (ev.type_ == event_t::type::MOVEMENT) {
-
+			this->gamefield_.move_enemy(ev.id_, ev.direction_);
+		} else if (ev.type_ == event_t::type::ATTACK) {
+			this->gamefield_.enemy_shoot(ev.id_);
 		}
 	}
 }

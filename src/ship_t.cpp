@@ -69,6 +69,19 @@ ship_t::hp(int hp) {
 }
 //-----------------------------------------------------------------------------//
 void
+ship_t::move(event_t::direction dir) {
+	using direction = event_t::direction ;
+	switch (dir) {
+		case direction::UP:
+			--(this->position_.y_);
+			break;
+		case direction::DOWN:
+			++(this->position_.y_);
+			break;
+	}
+}
+//-----------------------------------------------------------------------------//
+void
 ship_t::tick() {
 	this->position_.x_ += this->speed_;
 }
