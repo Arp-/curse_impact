@@ -47,15 +47,10 @@ static int relatify_divided_value(
 			index++;
 		}
 	}
-	std::cout << " repr[0]: " << str_repr[0] << std::endl;
-	std::cout << " repr[1]: " << str_repr[1] << std::endl;
 	int first = std::stoi(str_repr[0]);
 	int second = std::stoi(str_repr[1]);
-	std::cout << "first: " << first << std::endl;
-	std::cout << "second: " << second << std::endl;
 	
 	int ret =  get_dimension<dim_V>(gf) * first / second;
-	std::cout << "ret : " << ret << std::endl;
 	return ret;
 }
 //-----------------------------------------------------------------------------//
@@ -64,10 +59,8 @@ static void set_relative_position(
 
 	std::string x_repr = node.attribute("x").value();
 	if (util::is_divisible_format(x_repr)) {
-		std::cout << "x_was divisible format" << std::endl;
 		pos.x_ = relatify_divided_value<dimension::X>(gf, x_repr);
 	} else if (util::is_integral_format(x_repr)) {
-		std::cout << "x_was integral format" << std::endl;
 		pos.x_ = std::stoi(x_repr);
 	} else { 
 		throw invalid_format_error { x_repr };
@@ -75,10 +68,8 @@ static void set_relative_position(
 
 	std::string y_repr = node.attribute("y").value();
 	if (util::is_divisible_format(y_repr)) {
-		std::cout << "y_was divisible format" << std::endl;
 		pos.y_ = relatify_divided_value<dimension::Y>(gf, y_repr);
 	} else if (util::is_integral_format(x_repr)) {
-		std::cout << "y_was integral format" << std::endl;
 		pos.y_ = std::stoi(y_repr);
 	}
 
@@ -204,11 +195,8 @@ script_t::read_texture_list(const pugi::xml_node& root) {
 	for (auto texture = root.child("texture");
 			texture; texture = texture.next_sibling("texture")) {
 
-		std::cout << "ADDING TEXTURE" << std::endl;
-
 		std::string id = texture.attribute("id").value();
 		std::string res = texture.attribute("res").value();
-		std::cout << "RES: " << res << std::endl;
 		texture_t t = texture_t::read_from_file(res);
 		this->texture_list_.push_back({id, t});
 	}
