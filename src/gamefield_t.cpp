@@ -192,7 +192,7 @@ gamefield_t::enemy_list_tick() {
 	}
 }
 //-----------------------------------------------------------------------------//
-static bool is_bullet_in_rect(const position_t& bullet_pos, 
+static bool is_position_in_rect(const position_t& bullet_pos, 
 		const position_t& rect_pos, const rect_t& rect) {
 		
 	if (bullet_pos.x_ >= rect_pos.x_ + rect.width_) {
@@ -210,6 +210,56 @@ static bool is_bullet_in_rect(const position_t& bullet_pos,
 	return true;
 }
 //-----------------------------------------------------------------------------//
+static bool is_rect_overlapping(const position_t& pos1, const rect_t& rect1,
+		const position_t& pos2, const rect_t& rect2) {
+
+	for (int x = 0; x < rect1.width_; x++) {
+		for (int y = 0; y < rect1.width_; y++) {
+			if (is_position_in_rect({ x + pos1.x_, y + pos1.y_}, pos2, rect2)) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+//-----------------------------------------------------------------------------//
+static void 
+handle_ship_bullet_check(
+		auto& bullets_to_delete,
+		auto& enemies_to_delete,
+		auto& bullet_it, auto& enemy_it) {
+
+	if (is_position_in_rect(bullet_it->position(),
+				enemy_it->position(), enemy_it->rect())) {
+		bullets_to_delete.push_back(bullet_it);
+		enemy_it->hp_decrement();
+		if (enemy_it->hp() <= 0) {
+			enemies_to_delete.push_back(enemy_it);
+		}
+	}
+}
+//-----------------------------------------------------------------------------//
+static void
+handle_player_enemy_check(auto& enemies_to_delete, auto& enemy_it, auto& ship) {
+	if (is_rect_overlapping(enemy_it->position(), enemy_it->rect(),
+				ship.position(), ship.rect())) {
+		enemy_it->hp_decrement();
+		// handle player death in the main game loop for now, only decrement it here
+		ship.hp_decrement(); 
+		if (enemy_it->hp() <= 0) {
+			enemies_to_delete.push_back(enemy_it);
+		}
+	}
+}
+//-----------------------------------------------------------------------------//
+static void
+handle_player_bullet_check(auto& bullets_to_delete, auto& bullet_it, auto& ship) {
+	if (is_position_in_rect(bullet_it->position(), ship.position(), ship.rect())) {
+		bullets_to_delete.push_back(bullet_it);
+		ship.hp_decrement();
+	}
+}
+//-----------------------------------------------------------------------------//
 void
 gamefield_t::hitcheck() {
 	// should check collision agains walls,
@@ -218,23 +268,27 @@ gamefield_t::hitcheck() {
 	std::vector<bullet_list_t::iterator> bullets_to_delete;
 	std::vector<ship_list_t::iterator> enemies_to_delete;
 
+	for (auto it = this->enemy_list_.begin();
+			it != this->enemy_list_.end(); ++it) {
+
+		for (auto bullet_it = this->bullet_list_.begin();
+				bullet_it != this->bullet_list_.end(); ++bullet_it) {
+
+			handle_ship_bullet_check(
+					bullets_to_delete, enemies_to_delete, bullet_it, it);
+
+		}
+
+		handle_player_enemy_check(enemies_to_delete, it, this->ship_);
+	}
 
 	for (auto bullet_it = this->bullet_list_.begin();
 			bullet_it != this->bullet_list_.end(); ++bullet_it) {
 
-		for (auto it = this->enemy_list_.begin();
-				it != this->enemy_list_.end(); ++it) {
-
-			if (is_bullet_in_rect(bullet_it->position(),
-						it->position(), it->rect())) {
-				bullets_to_delete.push_back(bullet_it);
-				it->hp_decrement();
-				if (it->hp() <= 0) {
-					enemies_to_delete.push_back(it);
-				}
-			}
-		}
+		handle_player_bullet_check(bullets_to_delete, bullet_it, this->ship_);
 	}
+
+
 
 	for (auto it : bullets_to_delete) {
 		this->bullet_list_.erase(it);

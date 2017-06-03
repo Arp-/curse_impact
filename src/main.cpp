@@ -194,7 +194,8 @@ static void game() {
 			break;
 		}
 		move(1,1);
-		printw("instruction %02X, %02X", (int)instruction.movement, (int)instruction.attack );
+		//printw("instruction %02X, %02X", (int)instruction.movement, (int)instruction.attack );
+		printw("hp: %d\n", gf.ship().hp());
 		render_clean(gf);
 		script.tick();
 		game_logic(gf, instruction);

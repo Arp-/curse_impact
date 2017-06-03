@@ -49,9 +49,8 @@ static int relatify_divided_value(
 	}
 	int first = std::stoi(str_repr[0]);
 	int second = std::stoi(str_repr[1]);
-	
-	int ret =  get_dimension<dim_V>(gf) * first / second;
-	return ret;
+
+	return (get_dimension<dim_V>(gf) * first / second);
 }
 //-----------------------------------------------------------------------------//
 static void set_relative_position(
