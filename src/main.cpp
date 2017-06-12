@@ -34,10 +34,26 @@ static void render_ship(const ship_t& ship, const texture_t& texture) {
 
 	for (int x = 0; x < rect.width_; x++) {
 		for (int y = 0; y < rect.height_; y++) {
-			mvaddch(position.y_ + y, position.x_ + x, texture[y][x]);
+			move(2,1);
+			printw("x: %d y: %d\n", x, y);
+			move(3,1);
+			printw("size_x: %d, size_y: %d\n", texture.matrix().size(), texture[x].size());
+			auto tx = texture[y][x];
+			
+			mvaddch(position.y_ + y, position.x_ + x, tx);
 		}
 	}
+}
+//-----------------------------------------------------------------------------//
+static void render_clean_ship(const ship_t& ship) {
+		const auto& rect = ship.rect();
+		const auto& position = ship.position();
 
+		for (int x = 0; x < rect.width_; x++) {
+			for (int y = 0; y < rect.height_; y++) {
+				mvaddch(position.y_ + y, position.x_ + x, ' ');
+			}
+		}
 }
 //-----------------------------------------------------------------------------//
 static void render_gamefield(const gamefield_t& gamefield) {
@@ -119,10 +135,9 @@ static void render_ship_list(const gamefield_t::ship_list_t& ship_list,
 	}
 }
 //-----------------------------------------------------------------------------//
-static void render_clean_ship_list(const gamefield_t::ship_list_t& ship_list,
-		const texture_t& texture) {
+static void render_clean_ship_list(const gamefield_t::ship_list_t& ship_list) {
 	for (const auto& ship : ship_list) {
-		render_ship(ship, texture);
+		render_clean_ship(ship);
 	}
 }
 //-----------------------------------------------------------------------------//
@@ -135,7 +150,7 @@ static void render_clean(gamefield_t& gf) {
 	const auto& ship = gf.ship();
 	render_ship(ship, clear_texture);
 	render_bullet_list(gf.bullet_list(), ' ');
-	render_clean_ship_list(gf.enemy_list(), clear_texture);
+	render_clean_ship_list(gf.enemy_list());
 }
 //-----------------------------------------------------------------------------//
 static void game_logic(gamefield_t& gf, instruction_t instruction) {
@@ -151,11 +166,6 @@ static void game_logic(gamefield_t& gf, instruction_t instruction) {
 static void render(gamefield_t& gf,
 		const script_t::texture_ship_assoc_t& assoc_table) {
 
-	static texture_t enemy_texture = {{
-		{ ' ', 'e', ' ' },
-		{ 'e', 'e', 'e' },
-		{ ' ', 'e', ' ' },
-	}};
 	static texture_t ship_texture = {{
 		{ ' ', '|', ' ' },
 		{ '|', 'K', '>' },

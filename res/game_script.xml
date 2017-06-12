@@ -2,11 +2,20 @@
 
 <level>
 
+	<!-- TEXTURES -->
 	<texture res="./res/texture/enemy_A.txt" id="enemy_A" />
-
 	<texture res="./res/texture/enemy_B.txt" id="enemy_B" />
+	<texture res="./res/texture/enemy_BOSS.txt" id="enemy_BOSS" />
 
-	<enemy time="10" hp="1" x="-3" y="0/6" speed="-1" texture_ref="enemy_B" >
+
+	<!-- DIMENSIONS -->
+	<rectangle width="3" height="3" id="rect_DEFAULT" />
+	<rectangle width="5" height="5" id="rect_BOSS" />
+
+
+
+	<!-- ENEMIES -->
+	<enemy time="10" hp="1" x="-3" y="0/6" speed="-1" texture_ref="enemy_BOSS" rect="rect_BOSS" >
 		<move offset="2" direction="down" />
 		<move offset="4" direction="down" />
 		<move offset="4" direction="down" />
@@ -14,24 +23,17 @@
 		<atk offset="6" />
 	</enemy>
 
-	<enemy time="15" hp="1" x="-3" y="1/6" speed="-1" texture_ref="enemy_A" />
-
-	<enemy time="20" hp="1" x="-3" y="2/6" speed="-1" texture_ref="enemy_A" />
-
-	<enemy time="25" hp="1" x="-3" y="3/6" speed="-1" texture_ref="enemy_B" />
-
-	<enemy time="30" hp="1" x="-3" y="4/6" speed="-1" texture_ref="enemy_A" />
-
-	<enemy time="35" hp="1" x="-3" y="5/6" speed="-1" texture_ref="enemy_B" />
-
-	<enemy time="40" hp="1" x="-3" y="4/6" speed="-1" texture_ref="enemy_A" />
-
-	<enemy time="45" hp="1" x="-3" y="3/6" speed="-1" texture_ref="enemy_A" />
-
-	<enemy time="50" hp="1" x="-3" y="2/6" speed="-2" texture_ref="enemy_A" />
+	<enemy time="15" hp="1" x="-3" y="1/6" speed="-1" texture_ref="enemy_A" rect="rect_DEFAULT" />
+	<enemy time="20" hp="1" x="-3" y="2/6" speed="-1" texture_ref="enemy_A" rect="rect_DEFAULT" />
+	<enemy time="25" hp="1" x="-3" y="3/6" speed="-1" texture_ref="enemy_B" rect="rect_DEFAULT" />
+	<enemy time="30" hp="1" x="-3" y="4/6" speed="-1" texture_ref="enemy_A" rect="rect_DEFAULT" />
+	<enemy time="35" hp="1" x="-3" y="5/6" speed="-1" texture_ref="enemy_B" rect="rect_DEFAULT" />
+	<enemy time="40" hp="1" x="-3" y="4/6" speed="-1" texture_ref="enemy_A" rect="rect_DEFAULT" />
+	<enemy time="45" hp="1" x="-3" y="3/6" speed="-1" texture_ref="enemy_A" rect="rect_DEFAULT" />
+	<enemy time="50" hp="1" x="-3" y="2/6" speed="-2" texture_ref="enemy_A" rect="rect_DEFAULT" />
 
 
+	<enemy time="100" hp="100" x="-10" y="2/6" speed="0" texture_ref="enemy_BOSS" rect="rect_BOSS" />
 
-	<enemy time="100" hp="100" x="-3" y="2/6" speed="0" texture_ref="enemy_B" />
 
 </level>

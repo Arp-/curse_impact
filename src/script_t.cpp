@@ -102,11 +102,22 @@ static void print_history(const script_t::history_t& hist) {
 		}
 }
 //-----------------------------------------------------------------------------//
+int
+script_t::rect_index_by_name(const std::string& name) const {
+	for (int i = 0; i < this->rectangle_list_.size(); i++) {
+		if (this->rectangle_list_[i].first == name) {
+			return i;
+		}
+	}
+	return -1;
+}
+//-----------------------------------------------------------------------------//
 event_t 
 script_t::get_event_from_ship_node(const pugi::xml_node& node) {
 	static int ship_id_counter = 1;
 	event_t event;
 	event.id_ = ship_id_counter++;
+	event.rect_id_ = rect_index_by_name(node.attribute("rect").value());
 	event.type_ = event_t::type::APPEAR;
 	event.hp_ = atoi(node.attribute("hp").value());
 	set_relative_position(this->gamefield_, event.position_, node);
@@ -118,6 +129,8 @@ script_t::get_event_from_ship_node(const pugi::xml_node& node) {
 event_t::type get_event_type(const pugi::xml_node& node) {
 	// NOTE using std::string as a wrapper because pugixml 
 	// returns const char* and that does memory address comparsion
+	// EDIT i could actually user strcmp from cstdlib for it
+	// TODO use strcmp from cstdlib, or cstring
 	if (node.name() == std::string{"move"}) {
 		return event_t::type::MOVEMENT;
 	} else if (node.name() == std::string {"atk"}) {
@@ -201,6 +214,23 @@ script_t::read_texture_list(const pugi::xml_node& root) {
 	}
 }
 //-----------------------------------------------------------------------------//
+void 
+script_t::read_rectangle_list(const pugi::xml_node& root) {
+	for (auto rect = root.child("rectangle");
+			rect; rect = rect.next_sibling("rectangle")) {
+
+		std::string width = rect.attribute("width").value();
+		std::string height = rect.attribute("height").value();
+		std::string id = rect.attribute("id").value();
+		rect_t r;
+		r.width_ = std::stoi(width);
+		r.height_ = std::stoi(height);
+
+		this->rectangle_list_.push_back({id, r});
+
+	}
+}
+//-----------------------------------------------------------------------------//
 void
 script_t::read_xml(const char* filepath) {
 	pugi::xml_document doc;
@@ -211,6 +241,7 @@ script_t::read_xml(const char* filepath) {
 	}
 	const auto& root = doc.child("level");
 	read_texture_list(root);
+	read_rectangle_list(root);
 	read_enemy_ship_list(root);
 
 	// TODO REMOVE FROM PRODUCTION
@@ -227,7 +258,12 @@ script_t::tick() {
 	const auto& ev_list = this->history_[this->time_];
 	for (const auto& ev : ev_list) {
 		if (ev.type_ == event_t::type::APPEAR) {
-			ship_t enemy { ev.position_, { 3, 3 }, ev.speed_, ev.hp_, ev.id_};
+			rect_t r = this->rectangle_list_[ev.rect_id_].second;
+			if (ev.rect_id_ < 0) {
+				r.width_ = 3;
+				r.height_ = 3;
+			}
+			ship_t enemy { ev.position_, r, ev.speed_, ev.hp_, ev.id_};
 			this->gamefield_.add_enemy(enemy);
 		} else if (ev.type_ == event_t::type::MOVEMENT) {
 			this->gamefield_.move_enemy(ev.id_, ev.direction_);

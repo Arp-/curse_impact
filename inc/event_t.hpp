@@ -25,6 +25,7 @@ struct event_t {
 
 
 	int id_;
+	int rect_id_;
 	type type_; 
 	direction direction_;
 	position_t position_;
