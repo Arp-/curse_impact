@@ -69,14 +69,18 @@ ship_t::hp(int hp) {
 }
 //-----------------------------------------------------------------------------//
 void
-ship_t::move(event_t::direction dir) {
-	using direction = event_t::direction ;
+ship_t::move(event_t::direction dir, const rect_t& gamefield_rect ) {
+	using direction = event_t::direction;
 	switch (dir) {
 		case direction::UP:
-			--(this->position_.y_);
+			if (this->position_.y_ > 0) {
+				--(this->position_.y_);
+			}
 			break;
 		case direction::DOWN:
-			++(this->position_.y_);
+			if (this->position_.y_ < (gamefield_rect.height_-1)) {
+				++(this->position_.y_);
+			}
 			break;
 	}
 }
