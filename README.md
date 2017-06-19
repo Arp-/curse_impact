@@ -13,7 +13,7 @@ Features still missing:
 
 Currently i use a simple bash script to run g++ compiler, so if you use clang, or omething else then you have to modify it to compile.
 
-The other thing this program is made for ncurses compatibe terminal emulators, and i also use linux's fork command, so this program probably only compiles in a linux environment.
+The other thing this program is made for ncurses compatibe terminal emulators, so this program probably only compiles in a linux environment.
 
 ## Movement
 
