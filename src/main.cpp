@@ -5,7 +5,7 @@
 #include <ncurses.h>
 #include <unistd.h>
 #include "instruction_t.hpp"
-#include "pugixml/pugixml.hpp"
+#include "pugixml.hpp"
 #include "script_t.hpp"
 #include "texture_t.hpp"
 
