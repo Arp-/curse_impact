@@ -87,11 +87,11 @@ static void print_history(const script_t::history_t& hist) {
 				std::cout << "id: " << ev.id_ << " ";
 				std::cout << "position.x_: " << ev.position_.x_ << " ";
 				std::cout << "position.y_: " << ev.position_.y_ << " ";
-				if (ev.type_ == event_t::type::ATTACK) {
+				if (ev.type_ == ship_event_t::type::ATTACK) {
 					std::cout << "ATTACK";
-				} else if (ev.type_ == event_t::type::APPEAR) {
+				} else if (ev.type_ == ship_event_t::type::APPEAR) {
 					std::cout << "APPEAR";
-				} else if (ev.type_ == event_t::type::MOVEMENT) {
+				} else if (ev.type_ == ship_event_t::type::MOVEMENT) {
 					std::cout << "MOVEMENT";
 				} else {
 					std::cout << "NOP";
@@ -118,7 +118,7 @@ script_t::get_event_from_ship_node(const pugi::xml_node& node) {
 	event_t event;
 	event.id_ = ship_id_counter++;
 	event.rect_id_ = rect_index_by_name(node.attribute("rect").value());
-	event.type_ = event_t::type::APPEAR;
+	event.type_ = ship_event_t::type::APPEAR;
 	event.hp_ = atoi(node.attribute("hp").value());
 	set_relative_position(this->gamefield_, event.position_, node);
 	event.speed_ = atoi(node.attribute("speed").value());
@@ -126,26 +126,26 @@ script_t::get_event_from_ship_node(const pugi::xml_node& node) {
 	return event;
 }
 //-----------------------------------------------------------------------------//
-event_t::type get_event_type(const pugi::xml_node& node) {
+ship_event_t::type get_event_type(const pugi::xml_node& node) {
 	// NOTE using std::string as a wrapper because pugixml 
 	// returns const char* and that does memory address comparsion
 	// EDIT i could actually user strcmp from cstdlib for it
 	// TODO use strcmp from cstdlib, or cstring
 	if (node.name() == std::string{"move"}) {
-		return event_t::type::MOVEMENT;
+		return ship_event_t::type::MOVEMENT;
 	} else if (node.name() == std::string {"atk"}) {
-		return event_t::type::ATTACK;
+		return ship_event_t::type::ATTACK;
 	}
-	return event_t::type::NOP;
+	return ship_event_t::type::NOP;
 }
 //-----------------------------------------------------------------------------//
-event_t::direction get_event_direction(const pugi::xml_attribute& attr) {
+ship_event_t::direction get_event_direction(const pugi::xml_attribute& attr) {
 	if (attr.value() == std::string {"up"}) {
-		return event_t::direction::UP;
+		return ship_event_t::direction::UP;
 	} else if (attr.value() == std::string {"down"}) {
-		return event_t::direction::DOWN;
+		return ship_event_t::direction::DOWN;
 	}
-	return event_t::direction::NOP;
+	return ship_event_t::direction::NOP;
 }
 //-----------------------------------------------------------------------------//
 // TODO remove in favor of event_from_ship_child_node
@@ -276,7 +276,7 @@ script_t::tick() {
 
 	const auto& ev_list = this->history_[this->time_];
 	for (const auto& ev : ev_list) {
-		if (ev.type_ == event_t::type::APPEAR) {
+		if (ev.type_ == ship_event_t::type::APPEAR) {
 			rect_t r = this->rectangle_list_[ev.rect_id_].second;
 			if (ev.rect_id_ < 0) {
 				r.width_ = 3;
@@ -284,9 +284,9 @@ script_t::tick() {
 			}
 			ship_t enemy { ev.position_, r, ev.speed_, ev.hp_, ev.id_};
 			this->gamefield_.add_enemy(enemy);
-		} else if (ev.type_ == event_t::type::MOVEMENT) {
+		} else if (ev.type_ == ship_event_t::type::MOVEMENT) {
 			this->gamefield_.move_enemy(ev.id_, ev.direction_);
-		} else if (ev.type_ == event_t::type::ATTACK) {
+		} else if (ev.type_ == ship_event_t::type::ATTACK) {
 			this->gamefield_.enemy_shoot(ev.id_);
 		}
 	}

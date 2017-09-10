@@ -46,7 +46,7 @@ class gamefield_t {
 
 		void move_ship(instruction_t instruction);
 
-		void move_enemy(int ship_id, event_t::direction dir);
+		void move_enemy(int ship_id, ship_event_t::direction dir);
 
 		void ship_shoot();
 

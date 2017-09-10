@@ -36,7 +36,7 @@ class ship_t {
 
 		void hp(int hp);
 
-		void move(event_t::direction dir, const rect_t& gf_rect);
+		void move(ship_event_t::direction dir, const rect_t& gf_rect);
 
 		void tick();
 

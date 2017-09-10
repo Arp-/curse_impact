@@ -4,8 +4,8 @@
 event_t::event_t():
 	id_(0),
 	rect_id_(0),
-	type_(event_t::type::NOP),
-	direction_(event_t::direction::NOP),
+	type_(ship_event_t::type::NOP),
+	direction_(ship_event_t::direction::NOP),
 	position_(0,0),
 	hp_(0),
 	speed_(0) {

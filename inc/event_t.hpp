@@ -10,33 +10,6 @@
 
 
 
-// TODO remove once the others are finished
-struct event_t {
-
-	event_t();
-	~event_t() = default;
-
-	enum class direction {
-		NOP,
-		UP,
-		DOWN,
-	};
-
-	enum class type {
-		NOP,
-		APPEAR,
-		MOVEMENT,
-		ATTACK,
-	};
-
-	int id_;
-	int rect_id_;
-	type type_; 
-	direction direction_;
-	position_t position_;
-	int hp_;
-	int speed_;
-};
 
 struct ship_event_t {
 
@@ -45,8 +18,9 @@ struct ship_event_t {
 
 	enum class type {
 		NOP,
-		MOVE,
+		MOVEMENT,
 		ATTACK,
+		APPEAR, // TODO remove once everything is set
 	};
 
 	enum class direction {
@@ -58,6 +32,21 @@ struct ship_event_t {
 	type type_;
 	direction direction_;
 
+};
+
+// TODO remove once the others are finished
+struct event_t {
+
+	event_t();
+	~event_t() = default;
+
+	int id_;
+	int rect_id_;
+	ship_event_t::type type_; 
+	ship_event_t::direction direction_;
+	position_t position_;
+	int hp_;
+	int speed_;
 };
 
 template <typename T>

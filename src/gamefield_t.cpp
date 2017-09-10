@@ -128,7 +128,7 @@ gamefield_t::move_ship(instruction_t instruction) {
 }
 //-----------------------------------------------------------------------------//
 void
-gamefield_t::move_enemy(int ship_id, event_t::direction dir) {
+gamefield_t::move_enemy(int ship_id, ship_event_t::direction dir) {
 	auto it = this->find_enemy(ship_id);
 	if (it == this->enemy_list_.end()) { return; }
 	it->move(dir, this->rect());
