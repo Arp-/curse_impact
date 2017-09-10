@@ -34,6 +34,8 @@ class script_t {
 
 		void tick();
 
+		void tick_active_ship_list();
+
 		const texture_ship_assoc_t& texture_ship_assoc() const;
 
 

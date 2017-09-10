@@ -63,9 +63,20 @@ namespace util {
 
 	template <typename elem_T, typename container_T, typename key_T>
 	void set_if_undef(container_T& cont, const key_T& key /* default */) {
-		if (cont.count(key)) {
+		if (!cont.count(key)) {
 			cont[key] = elem_T {};
 		}
+	}
+
+	template <typename iterator_T, typename binary_predicate_T>
+	iterator_T max_if(iterator_T begin, iterator_T end, binary_predicate_T comparator) {
+		iterator_T max_it = begin;
+		for (iterator_T it = begin; it != end; it++) {
+			if (comparator(*max_it, *it)) {
+				max_it = it;
+			}
+		}
+		return max_it;
 	}
 
 

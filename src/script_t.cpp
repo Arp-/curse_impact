@@ -160,11 +160,12 @@ static event_t get_event_from_ship_child_node(
 	return event;
 }
 //-----------------------------------------------------------------------------//
-static event_t
+static ship_event_t
 make_ship_event(const pugi::xml_node& action) {
-	event_t ev;
+	ship_event_t ev;
 	ev.type_ = get_event_type(action);
 	ev.direction_ = get_event_direction(action.attribute("direction"));
+
 	return ev;
 }
 //-----------------------------------------------------------------------------//
@@ -184,13 +185,28 @@ script_t::texture_ref_by_name(const std::string& name) {
 	return it->second;
 }
 //-----------------------------------------------------------------------------//
+static ship_event_list_t::repeat_type 
+is_repeat_attr_set(const pugi::xml_node& ship) {
+	const pugi::xml_attribute attr = ship.attribute("repeat");
+	if (attr.empty()) {
+		return ship_event_list_t::repeat_type::SINGULAR;
+	}
+	if (attr.value() == std::string { "true" }) {
+		return ship_event_list_t::repeat_type::REPEATABLE;
+	}
+	return ship_event_list_t::repeat_type::SINGULAR;
+}
+//-----------------------------------------------------------------------------//
 ship_event_list_t
-make_ship_event_list(const pugi::xml_node& ship) {
-	ship_event_list_t ship_event_list {};
+static make_ship_event_list(const pugi::xml_node& ship) {
+
+	ship_event_list_t ship_event_list { is_repeat_attr_set(ship) };
+
 	for (const auto& child : ship) {
 		int offset = atoi(child.attribute("offset").value());
-		//ship_event_list[offset] = 
+		ship_event_list.insert(offset, make_ship_event(child));
 	}
+	std::cout << "event_list_size: " << ship_event_list.size() << std::endl;
 	return ship_event_list;
 }
 //-----------------------------------------------------------------------------//
@@ -267,29 +283,42 @@ script_t::read_xml(const char* filepath) {
 	print_history(this->history_);
 }
 //-----------------------------------------------------------------------------//
+void
+script_t::tick_active_ship_list() {
+	const auto& active_enemy_list = this->gamefield_.enemy_list();
+	for (const auto& enemy : active_enemy_list) {
+		const auto& ship_ev_list = this->ship_event_cont_[enemy.id()].tick();
+		if (!ship_ev_list) {
+			continue;
+		}
+		for (const auto& ship_ev : *ship_ev_list) {
+			if (ship_ev.type_ == ship_event_t::type::MOVEMENT) {
+				this->gamefield_.move_enemy(enemy.id(), ship_ev.direction_);
+			} else if (ship_ev.type_ == ship_event_t::type::ATTACK) {
+				this->gamefield_.enemy_shoot(enemy.id());
+			}
+		}
+	}
+}
+//-----------------------------------------------------------------------------//
 void 
 script_t::tick() {
 	this->time_++;
-	if (!this->history_.count(this->time_)) {
-		return;
-	}
-
-	const auto& ev_list = this->history_[this->time_];
-	for (const auto& ev : ev_list) {
-		if (ev.type_ == ship_event_t::type::APPEAR) {
-			rect_t r = this->rectangle_list_[ev.rect_id_].second;
-			if (ev.rect_id_ < 0) {
-				r.width_ = 3;
-				r.height_ = 3;
+	if (this->history_.count(this->time_)) {
+		const auto& ev_list = this->history_[this->time_];
+		for (const auto& ev : ev_list) {
+			if (ev.type_ == ship_event_t::type::APPEAR) {
+				rect_t r = this->rectangle_list_[ev.rect_id_].second;
+				if (ev.rect_id_ < 0) {
+					r.width_ = 3;
+					r.height_ = 3;
+				}
+				ship_t enemy { ev.position_, r, ev.speed_, ev.hp_, ev.id_};
+				this->gamefield_.add_enemy(enemy);
 			}
-			ship_t enemy { ev.position_, r, ev.speed_, ev.hp_, ev.id_};
-			this->gamefield_.add_enemy(enemy);
-		} else if (ev.type_ == ship_event_t::type::MOVEMENT) {
-			this->gamefield_.move_enemy(ev.id_, ev.direction_);
-		} else if (ev.type_ == ship_event_t::type::ATTACK) {
-			this->gamefield_.enemy_shoot(ev.id_);
 		}
 	}
+	tick_active_ship_list();
 }
 //-----------------------------------------------------------------------------//
 const script_t::texture_ship_assoc_t&
