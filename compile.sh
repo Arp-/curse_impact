@@ -1,1 +1,1 @@
-g++ -I "inc" -I "pugixml/src/" src/*.cpp pugixml/src/*.cpp  -lncurses -o curse_impact -ggdb
+g++ -I "inc" -I "pugixml/src/" src/*.cpp pugixml/src/*.cpp -std=c++14 -lncurses -o curse_impact -ggdb -pedantic

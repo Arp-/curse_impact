@@ -22,6 +22,8 @@ class script_t {
 
 		using texture_ship_assoc_t = std::map<int, texture_t>;
 
+		using ship_event_container_t = std::map<int, ship_event_list_t>;
+
 	public: //-- public functions --//
 
 		script_t(gamefield_t& gf);
@@ -53,6 +55,8 @@ class script_t {
 	private: //-- private --//
 
 		history_t history_;
+
+		ship_event_container_t ship_event_cont_;
 
 		texture_list_t texture_list_;
 

@@ -61,6 +61,13 @@ namespace util {
 		return true;
 	}
 
+	template <typename elem_T, typename container_T, typename key_T>
+	void set_if_undef(container_T& cont, const key_T& key /* default */) {
+		if (cont.count(key)) {
+			cont[key] = elem_T {};
+		}
+	}
+
 
 } // namespace util
 

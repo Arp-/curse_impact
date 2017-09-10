@@ -148,14 +148,24 @@ event_t::direction get_event_direction(const pugi::xml_attribute& attr) {
 	return event_t::direction::NOP;
 }
 //-----------------------------------------------------------------------------//
+// TODO remove in favor of event_from_ship_child_node
 static event_t get_event_from_ship_child_node(
 		const event_t& parent_ev, const pugi::xml_node& child_node) {
 
 	event_t event;
 	event.id_ = parent_ev.id_;
 	event.type_ = get_event_type(child_node);
-	event.direction_ = get_event_direction(child_node.attribute("direction"));
+	event.direction_ = 
+		get_event_direction(child_node.attribute("direction"));
 	return event;
+}
+//-----------------------------------------------------------------------------//
+static event_t
+make_ship_event(const pugi::xml_node& action) {
+	event_t ev;
+	ev.type_ = get_event_type(action);
+	ev.direction_ = get_event_direction(action.attribute("direction"));
+	return ev;
 }
 //-----------------------------------------------------------------------------//
 script_t::script_t(gamefield_t& gf): gamefield_(gf), time_(0) {
@@ -174,28 +184,37 @@ script_t::texture_ref_by_name(const std::string& name) {
 	return it->second;
 }
 //-----------------------------------------------------------------------------//
+ship_event_list_t
+make_ship_event_list(const pugi::xml_node& ship) {
+	ship_event_list_t ship_event_list {};
+	for (const auto& child : ship) {
+		int offset = atoi(child.attribute("offset").value());
+		//ship_event_list[offset] = 
+	}
+	return ship_event_list;
+}
+//-----------------------------------------------------------------------------//
 void
 script_t::read_enemy_ship_list(const pugi::xml_node& root) {
 	for (auto ship = root.child("enemy");
 			ship; ship = ship.next_sibling("enemy")) {
 
 		int time = atoi(ship.attribute("time").value());
-		if (!this->history_.count(time)) {
-			this->history_[time] = event_list_t {};
-		}
+		util::set_if_undef<event_list_t>(this->history_, time);
+
 		event_t&& ev = get_event_from_ship_node(ship);
 		std::string texture_name = ship.attribute("texture_ref").value();
-		std::cout << "refname: " <<
-			 this->texture_ref_by_name(texture_name).matrix().size() << std::endl;
+		//std::cout << "refname: " <<
+		//	 this->texture_ref_by_name(texture_name).matrix().size() << std::endl;
 		this->texture_ship_association_.emplace(ev.id_,
 				this->texture_ref_by_name(texture_name));
 		this->history_[time].push_back(ev);
+		this->ship_event_cont_[ev.id_] = make_ship_event_list(ship);
 		for (const auto& child : ship) {
 			int offset = atoi(child.attribute("offset").value());
 			int offset_time = time + offset;
-			if (!this->history_.count(offset_time)) {
-				this->history_[offset_time] = event_list_t {};
-			}
+			util::set_if_undef<event_list_t>(this->history_, offset_time);
+
 			event_t&& ev_child = get_event_from_ship_child_node(ev, child);
 			this->history_[offset_time].push_back(ev_child);
 		}

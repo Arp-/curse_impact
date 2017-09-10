@@ -223,11 +223,14 @@ static bool is_rect_overlapping(const position_t& pos1, const rect_t& rect1,
 	return false;
 }
 //-----------------------------------------------------------------------------//
+template <typename bullet_T, typename enemy_T, typename bullet_it_T,
+				 typename enemy_it_T>
 static void 
 handle_ship_bullet_check(
-		auto& bullets_to_delete,
-		auto& enemies_to_delete,
-		auto& bullet_it, auto& enemy_it) {
+		bullet_T& bullets_to_delete,
+		enemy_T& enemies_to_delete,
+		bullet_it_T& bullet_it,
+		enemy_it_T& enemy_it) {
 
 	if (is_position_in_rect(bullet_it->position(),
 				enemy_it->position(), enemy_it->rect())) {
@@ -239,8 +242,13 @@ handle_ship_bullet_check(
 	}
 }
 //-----------------------------------------------------------------------------//
+template <typename enemy_list_T, typename enemy_it_T>
 static void
-handle_player_enemy_check(auto& enemies_to_delete, auto& enemy_it, auto& ship) {
+handle_player_enemy_check(
+		enemy_list_T& enemies_to_delete, 
+		enemy_it_T& enemy_it,
+		ship_t& ship) {
+
 	if (is_rect_overlapping(enemy_it->position(), enemy_it->rect(),
 				ship.position(), ship.rect())) {
 		enemy_it->hp_decrement();
@@ -252,8 +260,12 @@ handle_player_enemy_check(auto& enemies_to_delete, auto& enemy_it, auto& ship) {
 	}
 }
 //-----------------------------------------------------------------------------//
+template <typename bullet_list_T, typename bullet_it_T>
 static void
-handle_player_bullet_check(auto& bullets_to_delete, auto& bullet_it, auto& ship) {
+handle_player_bullet_check(bullet_list_T& bullets_to_delete,
+		bullet_it_T& bullet_it,
+		ship_t& ship) {
+
 	if (is_position_in_rect(bullet_it->position(), ship.position(), ship.rect())) {
 		bullets_to_delete.push_back(bullet_it);
 		ship.hp_decrement();
