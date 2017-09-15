@@ -15,7 +15,7 @@ class script_t {
 
 	public:
 
-		using event_list_t = std::vector<event_t>;
+		using event_list_t = std::vector<appear_event_t>;
 		using history_t = std::map<int, event_list_t>;
 		using texture_list_t = std::vector<std::pair<std::string, texture_t>>;
 		using rectangle_list_t = std::vector<std::pair<std::string, rect_t>>;
@@ -41,7 +41,7 @@ class script_t {
 
 	private: //-- private functions --//
 
-		event_t get_event_from_ship_node(const pugi::xml_node&);
+		appear_event_t get_event_from_ship_node(const pugi::xml_node&);
 
 		void read_enemy_ship_list(const pugi::xml_node&);
 

@@ -31,16 +31,25 @@
 	<enemy time="40" hp="1" x="-3" y="4/6" speed="-1" texture_ref="enemy_A" rect="rect_DEFAULT" />
 	<enemy time="45" hp="1" x="-3" y="3/6" speed="-1" texture_ref="enemy_A" rect="rect_DEFAULT" />
 	<enemy time="50" hp="1" x="-3" y="2/6" speed="-2" texture_ref="enemy_A" rect="rect_DEFAULT" />
+	
 
 
 
 	<!-- LAST ONE IS THE BOSS OF THE MAP -->
-	<enemy time="100" hp="100" x="-10" y="2/6" speed="0" texture_ref="enemy_BOSS" rect="rect_BOSS" repeat="true">
+	<enemy time="10" hp="100" x="-10" y="2/6" speed="0" texture_ref="enemy_BOSS" rect="rect_BOSS" repeat="true">
 		<move offset="2" direction="up" />
 		<move offset="4" direction="up" />
-		<move offset="6" direction="down" />
+		<move offset="6" direction="up" />
 		<move offset="8" direction="down" />
-		<atk offset="10" />
+		<move offset="10" direction="down" />
+		<move offset="12" direction="down" />
+		<move offset="14" direction="down" />
+		<move offset="16" direction="down" />
+		<move offset="18" direction="down" />
+		<move offset="20" direction="up" />
+		<move offset="22" direction="up" />
+		<move offset="24" direction="up" />
+		<atk offset="24" />
 	</enemy>
 
 

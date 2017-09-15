@@ -6,6 +6,10 @@
 #include <iostream>
 #include <algorithm>
 
+#ifdef DEBUG
+# include <ncurses.h>
+#endif
+
 enum class dimension {
 	X,
 	Y,
@@ -87,16 +91,7 @@ static void print_history(const script_t::history_t& hist) {
 				std::cout << "id: " << ev.id_ << " ";
 				std::cout << "position.x_: " << ev.position_.x_ << " ";
 				std::cout << "position.y_: " << ev.position_.y_ << " ";
-				if (ev.type_ == ship_event_t::type::ATTACK) {
-					std::cout << "ATTACK";
-				} else if (ev.type_ == ship_event_t::type::APPEAR) {
-					std::cout << "APPEAR";
-				} else if (ev.type_ == ship_event_t::type::MOVEMENT) {
-					std::cout << "MOVEMENT";
-				} else {
-					std::cout << "NOP";
-				}
-			std::cout << ", ";
+				std::cout << ", ";
 			}
 			std::cout << std::endl;
 		}
@@ -112,13 +107,12 @@ script_t::rect_index_by_name(const std::string& name) const {
 	return -1;
 }
 //-----------------------------------------------------------------------------//
-event_t 
+appear_event_t 
 script_t::get_event_from_ship_node(const pugi::xml_node& node) {
 	static int ship_id_counter = 1;
-	event_t event;
+	appear_event_t event;
 	event.id_ = ship_id_counter++;
 	event.rect_id_ = rect_index_by_name(node.attribute("rect").value());
-	event.type_ = ship_event_t::type::APPEAR;
 	event.hp_ = atoi(node.attribute("hp").value());
 	set_relative_position(this->gamefield_, event.position_, node);
 	event.speed_ = atoi(node.attribute("speed").value());
@@ -149,14 +143,11 @@ ship_event_t::direction get_event_direction(const pugi::xml_attribute& attr) {
 }
 //-----------------------------------------------------------------------------//
 // TODO remove in favor of event_from_ship_child_node
-static event_t get_event_from_ship_child_node(
-		const event_t& parent_ev, const pugi::xml_node& child_node) {
+static appear_event_t get_event_from_ship_child_node(
+		const appear_event_t& parent_ev, const pugi::xml_node& child_node) {
 
-	event_t event;
+	appear_event_t event;
 	event.id_ = parent_ev.id_;
-	event.type_ = get_event_type(child_node);
-	event.direction_ = 
-		get_event_direction(child_node.attribute("direction"));
 	return event;
 }
 //-----------------------------------------------------------------------------//
@@ -218,22 +209,12 @@ script_t::read_enemy_ship_list(const pugi::xml_node& root) {
 		int time = atoi(ship.attribute("time").value());
 		util::set_if_undef<event_list_t>(this->history_, time);
 
-		event_t&& ev = get_event_from_ship_node(ship);
+		appear_event_t&& ev = get_event_from_ship_node(ship);
 		std::string texture_name = ship.attribute("texture_ref").value();
-		//std::cout << "refname: " <<
-		//	 this->texture_ref_by_name(texture_name).matrix().size() << std::endl;
 		this->texture_ship_association_.emplace(ev.id_,
 				this->texture_ref_by_name(texture_name));
 		this->history_[time].push_back(ev);
 		this->ship_event_cont_[ev.id_] = make_ship_event_list(ship);
-		for (const auto& child : ship) {
-			int offset = atoi(child.attribute("offset").value());
-			int offset_time = time + offset;
-			util::set_if_undef<event_list_t>(this->history_, offset_time);
-
-			event_t&& ev_child = get_event_from_ship_child_node(ev, child);
-			this->history_[offset_time].push_back(ev_child);
-		}
 	}
 }
 //-----------------------------------------------------------------------------//
@@ -286,12 +267,16 @@ script_t::read_xml(const char* filepath) {
 void
 script_t::tick_active_ship_list() {
 	const auto& active_enemy_list = this->gamefield_.enemy_list();
+	move(4, 20);
+	printw("active_ship_list_size: %d", active_enemy_list.size());
 	for (const auto& enemy : active_enemy_list) {
 		const auto& ship_ev_list = this->ship_event_cont_[enemy.id()].tick();
 		if (!ship_ev_list) {
 			continue;
 		}
 		for (const auto& ship_ev : *ship_ev_list) {
+			move(4,1);
+			printw("ship_event_type: %d", ship_ev.type_);
 			if (ship_ev.type_ == ship_event_t::type::MOVEMENT) {
 				this->gamefield_.move_enemy(enemy.id(), ship_ev.direction_);
 			} else if (ship_ev.type_ == ship_event_t::type::ATTACK) {
@@ -306,16 +291,17 @@ script_t::tick() {
 	this->time_++;
 	if (this->history_.count(this->time_)) {
 		const auto& ev_list = this->history_[this->time_];
+		move(6,1);
+		printw("ev_list %d\n", ev_list.size());
+
 		for (const auto& ev : ev_list) {
-			if (ev.type_ == ship_event_t::type::APPEAR) {
-				rect_t r = this->rectangle_list_[ev.rect_id_].second;
-				if (ev.rect_id_ < 0) {
-					r.width_ = 3;
-					r.height_ = 3;
-				}
-				ship_t enemy { ev.position_, r, ev.speed_, ev.hp_, ev.id_};
-				this->gamefield_.add_enemy(enemy);
+			rect_t r = this->rectangle_list_[ev.rect_id_].second;
+			if (ev.rect_id_ < 0) {
+				r.width_ = 3;
+				r.height_ = 3;
 			}
+			ship_t enemy { ev.position_, r, ev.speed_, ev.hp_, ev.id_};
+			this->gamefield_.add_enemy(enemy);
 		}
 	}
 	tick_active_ship_list();

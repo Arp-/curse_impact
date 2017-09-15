@@ -2,7 +2,6 @@
 A space impact clone for terminal emulators using ncurses
 
 Features still missing:
-* The boss's script sholud be repeatable
 * I shoud make some textures that indicate landscape for the game levels like in the original space impact.
 * There should be ultimate attack for the ship
 * You sohuld be able to modify your own ship's apperance via simple text file.
@@ -22,6 +21,8 @@ The other thing this program is made for ncurses compatibe terminal emulators, s
  * 'j' - upward
  * 'k' - downward
  * 'space' - shoot
+ * 'q' - quit the 'game'
+
  
 ## Map generation
 

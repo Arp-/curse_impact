@@ -12,6 +12,10 @@
 #include "position_t.hpp"
 #include "util.hpp"
 
+#ifdef DEBUG
+# include <ncurses.h>
+#endif 
+
 
 
 
@@ -39,15 +43,13 @@ struct ship_event_t {
 };
 
 // TODO remove once the others are finished
-struct event_t {
+struct appear_event_t {
 
-	event_t();
-	~event_t() = default;
+	appear_event_t();
+	~appear_event_t() = default;
 
 	int id_;
 	int rect_id_;
-	ship_event_t::type type_; 
-	ship_event_t::direction direction_;
 	position_t position_;
 	int hp_;
 	int speed_;
@@ -94,14 +96,18 @@ class event_list_t {
 
 		const event_vec_t* tick() {
 			//std::cerr << "tick: " << this->tick_ << std::endl;
+			move(5,1);
+			printw("                                        ");
+			move(5,1);
+			printw("tick: %d", this->tick_);
+
 			auto contains = this->container_.count(this->tick_);
 			//std::cerr << "contains: " << contains << std::endl;
 			event_vec_t* ptr = nullptr;
 			if (contains) {
 				ptr = &(this->container_.at(this->tick_));
 			}
-			if (this->repeat_type_ == repeat_type::REPEATABLE &&
-					this->tick_ == this->last_tick_) {
+			if (this->repeat_type_ == repeat_type::REPEATABLE) {
 				this->tick_ %= this->last_tick_;
 			}
 			this->tick_++;
@@ -122,16 +128,18 @@ class event_list_t {
 			finalize();
 		}
 
+		size_t size() const {
+			return this->container_.size();
+		}
+
+	private: //-- private functions --//
+
 		void finalize() {
 			auto max_it = util::max_if(this->container_.begin(), this->container_.end(),
 					[](const auto& max, const auto& elem) {
 						return max.first < elem.first;
 			});
 			this->last_tick_ = max_it->first;
-		}
-
-		size_t size() const {
-			return this->container_.size();
 		}
 
 
