@@ -95,14 +95,8 @@ class event_list_t {
 		~event_list_t() = default;
 
 		const event_vec_t* tick() {
-			//std::cerr << "tick: " << this->tick_ << std::endl;
-			move(5,1);
-			printw("                                        ");
-			move(5,1);
-			printw("tick: %d", this->tick_);
 
 			auto contains = this->container_.count(this->tick_);
-			//std::cerr << "contains: " << contains << std::endl;
 			event_vec_t* ptr = nullptr;
 			if (contains) {
 				ptr = &(this->container_.at(this->tick_));

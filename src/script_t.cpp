@@ -267,16 +267,12 @@ script_t::read_xml(const char* filepath) {
 void
 script_t::tick_active_ship_list() {
 	const auto& active_enemy_list = this->gamefield_.enemy_list();
-	move(4, 20);
-	printw("active_ship_list_size: %d", active_enemy_list.size());
 	for (const auto& enemy : active_enemy_list) {
 		const auto& ship_ev_list = this->ship_event_cont_[enemy.id()].tick();
 		if (!ship_ev_list) {
 			continue;
 		}
 		for (const auto& ship_ev : *ship_ev_list) {
-			move(4,1);
-			printw("ship_event_type: %d", ship_ev.type_);
 			if (ship_ev.type_ == ship_event_t::type::MOVEMENT) {
 				this->gamefield_.move_enemy(enemy.id(), ship_ev.direction_);
 			} else if (ship_ev.type_ == ship_event_t::type::ATTACK) {
@@ -291,8 +287,6 @@ script_t::tick() {
 	this->time_++;
 	if (this->history_.count(this->time_)) {
 		const auto& ev_list = this->history_[this->time_];
-		move(6,1);
-		printw("ev_list %d\n", ev_list.size());
 
 		for (const auto& ev : ev_list) {
 			rect_t r = this->rectangle_list_[ev.rect_id_].second;
