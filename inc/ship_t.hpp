@@ -40,6 +40,8 @@ class ship_t {
 
 		void tick();
 
+		friend std::ostream& operator<<(std::ostream&, const ship_t&);
+
 
 
 	private: //-- private functions --//
@@ -55,6 +57,10 @@ class ship_t {
 		int id_;
 
 };
+
+std::ostream& operator<<(std::ostream& out, const position_t& pos);
+
+std::ostream& operator<<(std::ostream& out, const ship_t& ship);
 
 
 #endif // CURSE_IMPACT_SHIP_T

@@ -89,5 +89,19 @@ void
 ship_t::tick() {
 	this->position_.x_ += this->speed_;
 }
+//-----------------------------------------------------------------------------//
+std::ostream& operator<<(std::ostream& out, const position_t& pos) {
+	out << "{ x: " << pos.x_ << ", y: " << pos.y_ << "}";
+	return out;
+}
+//-----------------------------------------------------------------------------//
+std::ostream& operator<<(std::ostream& out, const ship_t& ship) {
+	out << "{\n";
+	out << "\tid: " << ship.id_ << ",\n";
+	out << "\tposition: " << ship.position_ << ",\n";
+	out << "\tspeed: " << ship.speed_ << ",\n";
+	out << "\thp: " << ship.hp_ << "\n";
 
-
+	out << "}";
+	return out;
+}

@@ -10,8 +10,6 @@
 #include "texture_t.hpp"
 
 
-#define MOVEMENT_TICK 1
-
 using ship_texture_t = std::array<std::array<char, 3>, 3>;
 using bullet_texture_t = char;
 //-----------------------------------------------------------------------------//
@@ -31,6 +29,7 @@ static void print_texture(const texture_t& texture) {
 static void render_ship(const ship_t& ship, const texture_t& texture) {
 	const auto& rect =  ship.rect();
 	const auto& position = ship.position();
+	//std::cerr << "ship: " << ship << std::endl;
 
 	for (int x = 0; x < rect.width_; x++) {
 		for (int y = 0; y < rect.height_; y++) {
@@ -164,16 +163,28 @@ static void game_logic(gamefield_t& gf, instruction_t instruction) {
 }
 //-----------------------------------------------------------------------------//
 static void render(gamefield_t& gf,
-		const script_t::texture_ship_assoc_t& assoc_table) {
+		const script_t::texture_ship_assoc_t& assoc_table, const texture_t& player_texture) {
 
-	static texture_t ship_texture = {{
-		{ ' ', '|', ' ' },
-		{ '|', 'K', '>' },
-		{ ' ', '|', ' ' },
-	}};
-	render_ship(gf.ship(), ship_texture);
+	render_ship(gf.ship(), player_texture);
 	render_bullet_list(gf.bullet_list(), '-');
 	render_ship_list(gf.enemy_list(), assoc_table);
+}
+//-----------------------------------------------------------------------------//
+static texture_t
+load_player_texture(const std::string path) {
+
+	try {
+		return texture_t::read_from_file(path);
+	} catch (std::runtime_error& e) {
+		std::cerr << e.what() << std::endl;
+	}
+
+	std::cerr << "Defaulting player ship to initial value!" << std::endl;
+	return texture_t {{
+		{ 'X', 'X', 'X' },
+		{ 'X', 'X', 'X' },
+		{ 'X', 'X', 'X' },
+	}};
 }
 //-----------------------------------------------------------------------------//
 static void game() {
@@ -197,6 +208,8 @@ static void game() {
 	//ship_t enemy {{ 60, 10 }, { 3, 3 }, -1, 10};
 	//gf.add_enemy(enemy);
 	//render_gamefield(gf);
+	auto&& player_texture = 
+		load_player_texture("./res/texture/player_ship.txt");
 
 	while (true) {
 		instruction_t instruction = get_instruction();
@@ -209,7 +222,7 @@ static void game() {
 		render_clean(gf);
 		script.tick();
 		game_logic(gf, instruction);
-		render(gf, script.texture_ship_assoc());
+		render(gf, script.texture_ship_assoc(), player_texture);
 		refresh();
 		usleep(100000);
 	}

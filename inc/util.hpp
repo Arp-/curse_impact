@@ -79,6 +79,18 @@ namespace util {
 		return max_it;
 	}
 
+	template <typename T, typename C>
+	void remove_duplicates(T& container, C comparator) {
+		for (auto it = container.begin(); it != container.end(); it++) {
+			if (it == container.end()) { break; }
+			for (auto it_x = it+1; it_x != container.end(); it_x++) {
+				if (comparator(*it, *it_x)) {
+					container.erase(it_x);
+				}
+			}
+		}
+	}
+
 
 } // namespace util
 
