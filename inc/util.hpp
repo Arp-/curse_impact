@@ -3,6 +3,8 @@
 #ifndef CURSE_IMPACT_UTIL_HPP
 #define CURSE_IMPACT_UTIL_HPP
 
+#include <algorithm>
+
 namespace util {
 
 
@@ -81,14 +83,13 @@ namespace util {
 
 	template <typename T, typename C>
 	void remove_duplicates(T& container, C comparator) {
-		for (auto it = container.begin(); it != container.end(); it++) {
-			if (it == container.end()) { break; }
-			for (auto it_x = it+1; it_x != container.end(); it_x++) {
-				if (comparator(*it, *it_x)) {
-					container.erase(it_x);
-				}
-			}
+		auto end = container.end();
+		for (auto it = container.begin(); it != end; it++) {
+			end = std::remove_if(it+1, end, [it, comparator](auto elem) {
+				return comparator(*it, elem);
+			});
 		}
+		container.erase(end, container.end());
 	}
 
 

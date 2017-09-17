@@ -300,6 +300,13 @@ gamefield_t::hitcheck() {
 		handle_player_bullet_check(bullets_to_delete, bullet_it, this->ship_);
 	}
 
+	util::remove_duplicates(bullets_to_delete, [](auto it_a, auto it_b) {
+		return it_a == it_b;
+	});
+
+	util::remove_duplicates(enemies_to_delete, [](auto it_a, auto it_b) {
+		return it_a == it_b;
+	});
 
 
 	for (auto it : bullets_to_delete) {
