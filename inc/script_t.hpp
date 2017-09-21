@@ -54,7 +54,7 @@ class script_t {
 		int rect_index_by_name(const std::string& name) const;
 
 
-	private: //-- private --//
+	private: //-- private members --//
 
 		history_t history_;
 

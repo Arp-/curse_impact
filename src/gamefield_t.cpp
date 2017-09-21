@@ -3,6 +3,22 @@
 #include "gamefield_t.hpp"
 #include <algorithm>
 
+template <unsigned range_X, unsigned range_Y>
+static bool is_in_range(const position_t& p1, const position_t& p2) {
+	int start_x = p1.x_ - (range_X >> 2);
+	int start_y = p1.y_ - (range_Y >> 2);
+	int end_x = start_x + range_X;
+	int end_y = start_y + range_Y;
+	for (int i = start_x; i < end_x; i++) {
+		for (int j = start_y; j < end_y; j++) {
+			if ((i == p2.x_) && (j == p2.y_)) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+//-----------------------------------------------------------------------------//
 static bool is_ship_in_bound(
 		const rect_t& gf_rect, const position_t& ship_pos, const rect_t& ship_rect) {
 
@@ -300,6 +316,20 @@ gamefield_t::hitcheck() {
 		handle_player_bullet_check(bullets_to_delete, bullet_it, this->ship_);
 	}
 
+	for (auto bullet_it = this->bullet_list_.begin(); 
+			bullet_it != (this->bullet_list_.end()); ++bullet_it) {
+		for (auto it = (bullet_it+1); it != this->bullet_list_.end(); ++it) {
+			if (is_in_range<3,1>(it->position(), bullet_it->position())) {
+				bullets_to_delete.push_back(it);
+				bullets_to_delete.push_back(bullet_it);
+
+			}
+		}
+	}
+
+	// TODO put enemy bullets to a separate container that way i can 
+	// distignuish them and not make any collision between them
+	// also need a more collect check between them wether they, have corssed paths
 	util::remove_duplicates(bullets_to_delete, [](auto it_a, auto it_b) {
 		return it_a == it_b;
 	});
