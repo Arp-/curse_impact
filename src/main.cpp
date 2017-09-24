@@ -149,6 +149,7 @@ static void render_clean(gamefield_t& gf) {
 	const auto& ship = gf.ship();
 	render_ship(ship, clear_texture);
 	render_bullet_list(gf.bullet_list(), ' ');
+	render_bullet_list(gf.enemy_bullet_list(), ' ');
 	render_clean_ship_list(gf.enemy_list());
 }
 //-----------------------------------------------------------------------------//
@@ -167,6 +168,7 @@ static void render(gamefield_t& gf,
 
 	render_ship(gf.ship(), player_texture);
 	render_bullet_list(gf.bullet_list(), '-');
+	render_bullet_list(gf.enemy_bullet_list(), '*');
 	render_ship_list(gf.enemy_list(), assoc_table);
 }
 //-----------------------------------------------------------------------------//

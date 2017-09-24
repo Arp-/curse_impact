@@ -42,6 +42,8 @@ class gamefield_t {
 
 		const bullet_list_t& bullet_list() const;
 
+		const bullet_list_t& enemy_bullet_list() const;
+
 		const rect_t& rect() const;
 
 		void move_ship(instruction_t instruction);
@@ -77,6 +79,8 @@ class gamefield_t {
 		ship_list_t enemy_list_;
 
 		bullet_list_t bullet_list_;
+
+		bullet_list_t enemy_bullet_list_;
 
 };
 

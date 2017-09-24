@@ -76,6 +76,11 @@ gamefield_t::bullet_list() const {
 	return this->bullet_list_;
 }
 //-----------------------------------------------------------------------------//
+const gamefield_t::bullet_list_t&
+gamefield_t::enemy_bullet_list() const {
+	return this->enemy_bullet_list_;
+}
+//-----------------------------------------------------------------------------//
 const rect_t&
 gamefield_t::rect() const {
 	return this->rect_;
@@ -167,7 +172,7 @@ gamefield_t::enemy_shoot(int ship_id) {
 	const auto& ship_rect = it->rect();
 	bullet_t bullet { ship_pos.x_ - 1,
 		ship_pos.y_ + (ship_rect.height_ >> 1), it->speed() -1 };
-	this->bullet_list_.push_back(bullet);
+	this->enemy_bullet_list_.push_back(bullet);
 }
 //-----------------------------------------------------------------------------//
 void 
@@ -185,6 +190,16 @@ gamefield_t::bullet_list_tick() {
 		auto last_pos = this->bullet_list_.front().position();
 		if (!is_position_in_bound(this->rect_, last_pos)) {
 			this->bullet_list_.pop_front();
+		}
+	}
+	// the same for enemy_bullet_list
+	for (auto& bullet : this->enemy_bullet_list_) {
+		bullet.tick();
+	}
+	if (!this->enemy_bullet_list_.empty()) {
+		auto last_pos = this->enemy_bullet_list_.front().position();
+		if (!is_position_in_bound(this->rect_, last_pos)) {
+			this->enemy_bullet_list_.pop_front();
 		}
 	}
 }
@@ -294,6 +309,7 @@ gamefield_t::hitcheck() {
 	// should check collision against enemies;
 	// should check collision against bullets;
 	std::vector<bullet_list_t::iterator> bullets_to_delete;
+	std::vector<bullet_list_t::iterator> enemy_bullets_to_delete;
 	std::vector<ship_list_t::iterator> enemies_to_delete;
 
 	for (auto it = this->enemy_list_.begin();
@@ -310,27 +326,21 @@ gamefield_t::hitcheck() {
 		handle_player_enemy_check(enemies_to_delete, it, this->ship_);
 	}
 
-	for (auto bullet_it = this->bullet_list_.begin();
-			bullet_it != this->bullet_list_.end(); ++bullet_it) {
+	for (auto bullet_it = this->enemy_bullet_list_.begin();
+			bullet_it != this->enemy_bullet_list_.end(); ++bullet_it) {
 
-		handle_player_bullet_check(bullets_to_delete, bullet_it, this->ship_);
+		handle_player_bullet_check(enemy_bullets_to_delete, bullet_it, this->ship_);
 	}
 
-	for (auto bullet_it = this->bullet_list_.begin(); 
-			bullet_it != (this->bullet_list_.end()); ++bullet_it) {
-		for (auto it = (bullet_it+1); it != this->bullet_list_.end(); ++it) {
-			if (is_in_range<3,1>(it->position(), bullet_it->position())) {
-				bullets_to_delete.push_back(it);
-				bullets_to_delete.push_back(bullet_it);
-
-			}
-		}
-	}
 
 	// TODO put enemy bullets to a separate container that way i can 
 	// distignuish them and not make any collision between them
 	// also need a more collect check between them wether they, have corssed paths
 	util::remove_duplicates(bullets_to_delete, [](auto it_a, auto it_b) {
+		return it_a == it_b;
+	});
+
+	util::remove_duplicates(enemy_bullets_to_delete, [](auto it_a, auto it_b) {
 		return it_a == it_b;
 	});
 
@@ -341,6 +351,9 @@ gamefield_t::hitcheck() {
 
 	for (auto it : bullets_to_delete) {
 		this->bullet_list_.erase(it);
+	}
+	for (auto it : enemy_bullets_to_delete) {
+		this->enemy_bullet_list_.erase(it);
 	}
 	for (auto it : enemies_to_delete) {
 		this->enemy_list_.erase(it);
