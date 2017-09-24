@@ -3,9 +3,9 @@
 <level>
 
 	<!-- TEXTURES -->
-	<texture res="./res/texture/enemy_A.txt" id="enemy_A" />
-	<texture res="./res/texture/enemy_B.txt" id="enemy_B" />
-	<texture res="./res/texture/enemy_BOSS.txt" id="enemy_BOSS" />
+	<texture res="/texture/enemy_A.txt" id="enemy_A" />
+	<texture res="/texture/enemy_B.txt" id="enemy_B" />
+	<texture res="/texture/enemy_BOSS.txt" id="enemy_BOSS" />
 
 
 	<!-- DIMENSIONS -->

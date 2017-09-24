@@ -160,7 +160,8 @@ make_ship_event(const pugi::xml_node& action) {
 	return ev;
 }
 //-----------------------------------------------------------------------------//
-script_t::script_t(gamefield_t& gf): gamefield_(gf), time_(0) {
+script_t::script_t(gamefield_t& gf, std::string&& res_path):
+	gamefield_(gf), time_(0), resource_path_(res_path) {
 
 }
 //-----------------------------------------------------------------------------//
@@ -224,7 +225,7 @@ script_t::read_texture_list(const pugi::xml_node& root) {
 			texture; texture = texture.next_sibling("texture")) {
 
 		std::string id = texture.attribute("id").value();
-		std::string res = texture.attribute("res").value();
+		std::string res = this->resource_path_ + texture.attribute("res").value();
 		texture_t t = texture_t::read_from_file(res);
 		this->texture_list_.push_back({id, t});
 	}

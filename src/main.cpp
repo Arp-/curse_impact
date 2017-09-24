@@ -9,6 +9,11 @@
 #include "script_t.hpp"
 #include "texture_t.hpp"
 
+#ifndef RES_DIR
+#	define RES_DIR "res"
+#endif
+
+
 
 using ship_texture_t = std::array<std::array<char, 3>, 3>;
 using bullet_texture_t = char;
@@ -192,8 +197,8 @@ load_player_texture(const std::string path) {
 static void game() {
 
 	gamefield_t gf({140,40});
-	script_t script { gf };
-	script.read_xml("res/game_script.xml");
+	script_t script { gf, RES_DIR };
+	script.read_xml(RES_DIR "/game_script.xml");
 	gf.set_ship(
 			position_t {3,3},
 			rect_t {3,3},
@@ -211,7 +216,7 @@ static void game() {
 	//gf.add_enemy(enemy);
 	//render_gamefield(gf);
 	auto&& player_texture = 
-		load_player_texture("./res/texture/player_ship.txt");
+		load_player_texture(RES_DIR "/texture/player_ship.txt");
 
 	while (true) {
 		instruction_t instruction = get_instruction();

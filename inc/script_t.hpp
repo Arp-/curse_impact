@@ -26,7 +26,7 @@ class script_t {
 
 	public: //-- public functions --//
 
-		script_t(gamefield_t& gf);
+		script_t(gamefield_t& gf, std::string&& resource_path);
 
 		~script_t() = default;
 
@@ -69,6 +69,8 @@ class script_t {
 		gamefield_t& gamefield_;
 
 		time_t time_;
+
+		const std::string resource_path_;
 
 };
 
