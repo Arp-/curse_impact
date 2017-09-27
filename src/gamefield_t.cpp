@@ -304,7 +304,7 @@ handle_player_bullet_check(bullet_list_T& bullets_to_delete,
 }
 //-----------------------------------------------------------------------------//
 void
-gamefield_t::hitcheck() {
+gamefield_t::hitcheck(const gamefield_t& prev_gf) {
 	// should check collision agains walls,
 	// should check collision against enemies;
 	// should check collision against bullets;

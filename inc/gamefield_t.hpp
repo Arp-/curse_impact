@@ -60,7 +60,7 @@ class gamefield_t {
 
 		void enemy_list_tick();
 
-		void hitcheck();
+		void hitcheck(const gamefield_t& prev_gf);
 
 
 	private: //-- private functions --//

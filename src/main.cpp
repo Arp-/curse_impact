@@ -158,14 +158,16 @@ static void render_clean(gamefield_t& gf) {
 	render_clean_ship_list(gf.enemy_list());
 }
 //-----------------------------------------------------------------------------//
-static void game_logic(gamefield_t& gf, instruction_t instruction) {
+static void game_logic(script_t& script, gamefield_t& gf, instruction_t instruction) {
+	auto prev_gf = gf;
+	script.tick();
 	gf.move_ship(instruction);
 	gf.bullet_list_tick();
 	gf.enemy_list_tick();
 	if (instruction.attack == instruction_t::attack_t::SHOOT) {
 		gf.ship_shoot();
 	}
-	gf.hitcheck();
+	gf.hitcheck(prev_gf);
 }
 //-----------------------------------------------------------------------------//
 static void render(gamefield_t& gf,
@@ -227,8 +229,7 @@ static void game() {
 		//printw("instruction %02X, %02X", (int)instruction.movement, (int)instruction.attack );
 		printw("hp: %d\n", gf.ship().hp());
 		render_clean(gf);
-		script.tick();
-		game_logic(gf, instruction);
+		game_logic(script, gf, instruction);
 		render(gf, script.texture_ship_assoc(), player_texture);
 		refresh();
 		usleep(100000);
