@@ -4,6 +4,7 @@
 #define CURSE_IMPACT_GAMEFIELD_HPP
 
 #include <vector>
+#include <tuple>
 #include <deque>
 #include <memory>
 #include "ship_t.hpp"
@@ -18,6 +19,10 @@ class gamefield_t {
 
 		using ship_list_t = std::deque<ship_t>;
 		using bullet_list_t = std::deque<bullet_t>;
+		using enemy_bullet_id_t = unsigned;
+		using bullet_id_t = unsigned;
+		using distance_vec_t = std::vector<
+			std::tuple<enemy_bullet_id_t,bullet_id_t,position_t>>;
 
 	public: //-- public functions --//
 
@@ -66,6 +71,8 @@ class gamefield_t {
 	private: //-- private functions --//
 
 		ship_list_t::iterator find_enemy(int ship_id);
+
+		const distance_vec_t bullet_distance() const;
 
 
 	private: //-- private stuff --// 

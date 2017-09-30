@@ -2,9 +2,10 @@
 #ifndef CURSE_IMPACT_BULLET_T_HPP
 #define CURSE_IMPACT_BULLET_T_HPP
 
+#include "unique.hpp"
 #include "position_t.hpp"
 
-class bullet_t {
+class bullet_t : public unique<bullet_t> {
 
 	public: //-- public functions --//
 

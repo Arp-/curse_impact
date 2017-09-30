@@ -303,6 +303,28 @@ handle_player_bullet_check(bullet_list_T& bullets_to_delete,
 	}
 }
 //-----------------------------------------------------------------------------//
+const gamefield_t::distance_vec_t
+gamefield_t::bullet_distance() const {
+	distance_vec_t distance;
+
+	for (auto bullet_it = this->enemy_bullet_list_.cbegin();
+			bullet_it != this->enemy_bullet_list_.cend(); ++bullet_it) {
+
+		for (auto it = this->bullet_list_.begin();
+				it != this->bullet_list_.end(); ++it) {
+
+			if (bullet_it->position().y_ == it->position().y_) {
+				distance.push_back({ bullet_it->id(), it->id(), position_t { 
+							bullet_it->position().x_ - it->position().x_,
+							bullet_it->position().y_ - it->position().y_
+				}});
+			}
+
+		}
+	}
+	return distance;
+}
+//-----------------------------------------------------------------------------//
 void
 gamefield_t::hitcheck(const gamefield_t& prev_gf) {
 	// should check collision agains walls,
@@ -320,9 +342,7 @@ gamefield_t::hitcheck(const gamefield_t& prev_gf) {
 
 			handle_ship_bullet_check(
 					bullets_to_delete, enemies_to_delete, bullet_it, it);
-
 		}
-
 		handle_player_enemy_check(enemies_to_delete, it, this->ship_);
 	}
 
@@ -330,6 +350,34 @@ gamefield_t::hitcheck(const gamefield_t& prev_gf) {
 			bullet_it != this->enemy_bullet_list_.end(); ++bullet_it) {
 
 		handle_player_bullet_check(enemy_bullets_to_delete, bullet_it, this->ship_);
+	}
+
+
+	const distance_vec_t&& prev_distance = prev_gf.bullet_distance();
+	const distance_vec_t&& distance = this->bullet_distance();
+
+	for (const auto& elem : distance) {
+		const auto it = std::find_if(prev_distance.begin(), prev_distance.end(), 
+				[&elem](auto& prev) {
+					return std::get<0>(elem) == std::get<0>(prev) &&
+						std::get<1>(elem) == std::get<1>(prev);
+		});
+		if (it == prev_distance.end()) { break; }
+
+		const auto& prev_pos = std::get<2>(*it);
+		const auto& curr_pos = std::get<2>(elem);
+		if ((prev_pos.x_ < 0 && 0 <= curr_pos.x_ ||
+			prev_pos.x_ >= 0 && 0 > curr_pos.x_)) {
+			bullets_to_delete.push_back(std::find_if( this->bullet_list_.begin(),
+						this->bullet_list_.end(),[&elem](const auto& bullet) {
+					 		return std::get<1>(elem) == bullet.id();
+			}));
+			enemy_bullets_to_delete.push_back(std::find_if(
+						this->enemy_bullet_list_.begin(),
+						this->enemy_bullet_list_.end(), [&elem](const auto& bullet) {
+					 		return std::get<0>(elem) == bullet.id();
+			}));
+		}
 	}
 
 
