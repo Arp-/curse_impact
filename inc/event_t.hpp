@@ -76,10 +76,17 @@ class event_list_t {
 			REPEATABLE,
 		};
 
+
 	public: //-- public functions --//
 		event_list_t(): event_list_t(repeat_type::SINGULAR) { }
 
+		event_list_t(repeat_type rt): 
+			container_(),
+			tick_(0),
+			repeat_type_(rt) { }
+
 		event_list_t(bool repeatable) {
+	
 			if (repeatable) {
 				event_list_t(repeat_type::REPEATABLE);
 			} else {
@@ -87,10 +94,6 @@ class event_list_t {
 			}
 		}
 
-		event_list_t(repeat_type rt): 
-			container_(),
-			tick_(0),
-			repeat_type_(rt) { }
 
 		~event_list_t() = default;
 

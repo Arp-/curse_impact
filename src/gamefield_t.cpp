@@ -334,48 +334,41 @@ gamefield_t::hitcheck(const gamefield_t& prev_gf) {
 	std::vector<bullet_list_t::iterator> enemy_bullets_to_delete;
 	std::vector<ship_list_t::iterator> enemies_to_delete;
 
+	// collision between enemy and player bullet, and
+	// player ship vs enemy ship
 	for (auto it = this->enemy_list_.begin();
 			it != this->enemy_list_.end(); ++it) {
-
 		for (auto bullet_it = this->bullet_list_.begin();
 				bullet_it != this->bullet_list_.end(); ++bullet_it) {
-
 			handle_ship_bullet_check(
 					bullets_to_delete, enemies_to_delete, bullet_it, it);
 		}
 		handle_player_enemy_check(enemies_to_delete, it, this->ship_);
 	}
-
 	for (auto bullet_it = this->enemy_bullet_list_.begin();
 			bullet_it != this->enemy_bullet_list_.end(); ++bullet_it) {
-
 		handle_player_bullet_check(enemy_bullets_to_delete, bullet_it, this->ship_);
 	}
 
-
+	// Collision between player and enemy bullets
 	const distance_vec_t&& prev_distance = prev_gf.bullet_distance();
 	const distance_vec_t&& distance = this->bullet_distance();
-
 	for (const auto& elem : distance) {
-		const auto it = std::find_if(prev_distance.begin(), prev_distance.end(), 
-				[&elem](auto& prev) {
-					return std::get<0>(elem) == std::get<0>(prev) &&
-						std::get<1>(elem) == std::get<1>(prev);
-		});
+		const auto it = std::find(prev_distance.begin(), prev_distance.end(), elem);
 		if (it == prev_distance.end()) { break; }
 
-		const auto& prev_pos = std::get<2>(*it);
-		const auto& curr_pos = std::get<2>(elem);
+		const auto& prev_pos = it->position;
+		const auto& curr_pos = elem.position;
 		if ((prev_pos.x_ < 0 && 0 <= curr_pos.x_ ||
-			prev_pos.x_ >= 0 && 0 > curr_pos.x_)) {
+				 	prev_pos.x_ >= 0 && 0 > curr_pos.x_)) {
 			bullets_to_delete.push_back(std::find_if( this->bullet_list_.begin(),
 						this->bullet_list_.end(),[&elem](const auto& bullet) {
-					 		return std::get<1>(elem) == bullet.id();
+					 		return elem.bullet_id == bullet.id();
 			}));
 			enemy_bullets_to_delete.push_back(std::find_if(
 						this->enemy_bullet_list_.begin(),
 						this->enemy_bullet_list_.end(), [&elem](const auto& bullet) {
-					 		return std::get<0>(elem) == bullet.id();
+					 		return elem.enemy_bullet_id == bullet.id();
 			}));
 		}
 	}

@@ -15,14 +15,33 @@
 
 class gamefield_t {
 
+	private: //-- private struct --//
+
+		using enemy_bullet_id_t = unsigned;
+		using bullet_id_t = unsigned;
+
+		struct distance_t {
+			unsigned enemy_bullet_id;
+			unsigned bullet_id;
+			position_t position;
+
+			inline bool operator!=(distance_t d) const {
+				return d.enemy_bullet_id != this->enemy_bullet_id ||
+					d.bullet_id != this->bullet_id;
+			}
+
+			inline bool operator==(distance_t d) const {
+				return !(d != *this);
+			}
+		};
+
+		using distance_vec_t = std::vector<distance_t>;
 	public: 
 
 		using ship_list_t = std::deque<ship_t>;
 		using bullet_list_t = std::deque<bullet_t>;
-		using enemy_bullet_id_t = unsigned;
-		using bullet_id_t = unsigned;
-		using distance_vec_t = std::vector<
-			std::tuple<enemy_bullet_id_t,bullet_id_t,position_t>>;
+
+
 
 	public: //-- public functions --//
 
@@ -39,7 +58,6 @@ class gamefield_t {
 		void emplace_enemy_ship(Args&& ...args) {
 			this->enemy_list_.emplace_back(args...);
 		}
-
 
 		const ship_t& ship() const;
 

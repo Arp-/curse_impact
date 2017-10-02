@@ -2,5 +2,6 @@
 
 class bullet_t;
 
-template <>
-unsigned unique<bullet_t>::counter_ = 0;
+//template <>
+//unsigned unique<bullet_t>::counter_ = 0;
+

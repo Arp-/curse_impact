@@ -18,7 +18,6 @@ namespace util {
 		static constexpr bool value = true;
 	};
 
-
 	template <typename T, typename Arg, typename ...Args>
 	struct is_in_type_list {
 		static constexpr bool value = is_same<T,Arg>::value || is_in_type_list<T, Args...>::value;
