@@ -26,16 +26,6 @@ auto get_dimension<dimension::Y>(const gamefield_t& gf) {
 	return gf.rect().height_;
 }
 //-----------------------------------------------------------------------------//
-static const ship_t* ship_by_id(const gamefield_t::ship_list_t& ship_list, int id) {
-	auto it = (std::find_if(ship_list.begin(), ship_list.end(), 
-				[id](const ship_t& ship) { return ship.id() == id; }));
-
-	if (it == ship_list.end()) {
-		return nullptr;
-	}
-	return &(*it);
-}
-//-----------------------------------------------------------------------------//
 template <dimension dim_V>
 static int relatify_divided_value(
 		const gamefield_t& gf, const std::string& val) {
@@ -140,15 +130,6 @@ ship_event_t::direction get_event_direction(const pugi::xml_attribute& attr) {
 		return ship_event_t::direction::DOWN;
 	}
 	return ship_event_t::direction::NOP;
-}
-//-----------------------------------------------------------------------------//
-// TODO remove in favor of event_from_ship_child_node
-static appear_event_t get_event_from_ship_child_node(
-		const appear_event_t& parent_ev, const pugi::xml_node& child_node) {
-
-	appear_event_t event;
-	event.id_ = parent_ev.id_;
-	return event;
 }
 //-----------------------------------------------------------------------------//
 static ship_event_t

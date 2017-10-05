@@ -21,15 +21,15 @@ using bullet_texture_t = char;
 // STATIC CONSTANTS
 //-----------------------------------------------------------------------------//
 // FUNCTIONS FOR RENDERING
-static void print_texture(const texture_t& texture) {
-	const auto& cont = texture.matrix();
-	for (const auto& row : cont) {
-		for (const auto& elem : row) {
-			putc(elem, stdout);
-		}
-		putc('\n',stdout);
-	}
-}
+//static void print_texture(const texture_t& texture) {
+//	const auto& cont = texture.matrix();
+//	for (const auto& row : cont) {
+//		for (const auto& elem : row) {
+//			putc(elem, stdout);
+//		}
+//		putc('\n',stdout);
+//	}
+//}
 //-----------------------------------------------------------------------------//
 static void render_ship(const ship_t& ship, const texture_t& texture) {
 	const auto& rect =  ship.rect();
@@ -60,29 +60,29 @@ static void render_clean_ship(const ship_t& ship) {
 		}
 }
 //-----------------------------------------------------------------------------//
-static void render_gamefield(const gamefield_t& gamefield) {
-
-	const auto& rect = gamefield.rect();
-
-	for (int i = 0; i < rect.width_; i++) {
-		mvaddch(0,i, 'X');
-		mvaddch(rect.height_-1, i, 'X');
-	}
-	for (int i = 0; i < rect.height_; i++) {
-		mvaddch(i, 0, 'X');
-		mvaddch(i, rect.width_-1, 'X');
-	}
-
-	const auto& ship = (gamefield.ship());
-	texture_t t = {{
-			{ 'Y', 'Y', 'Y'},
-			{ 'Y', 'Y', 'Y'},
-			{ 'Y', 'Y', 'Y'},
-	}};
-	render_ship(ship, t);
-
-	refresh();
-}
+//static void render_gamefield(const gamefield_t& gamefield) {
+//
+//	const auto& rect = gamefield.rect();
+//
+//	for (int i = 0; i < rect.width_; i++) {
+//		mvaddch(0,i, 'X');
+//		mvaddch(rect.height_-1, i, 'X');
+//	}
+//	for (int i = 0; i < rect.height_; i++) {
+//		mvaddch(i, 0, 'X');
+//		mvaddch(i, rect.width_-1, 'X');
+//	}
+//
+//	const auto& ship = (gamefield.ship());
+//	texture_t t = {{
+//			{ 'Y', 'Y', 'Y'},
+//			{ 'Y', 'Y', 'Y'},
+//			{ 'Y', 'Y', 'Y'},
+//	}};
+//	render_ship(ship, t);
+//
+//	refresh();
+//}
 //-----------------------------------------------------------------------------//
 static instruction_t get_instruction() {
 	using movement_t = instruction_t::movement_t;

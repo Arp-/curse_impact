@@ -359,8 +359,8 @@ gamefield_t::hitcheck(const gamefield_t& prev_gf) {
 
 		const auto& prev_pos = it->position;
 		const auto& curr_pos = elem.position;
-		if ((prev_pos.x_ < 0 && 0 <= curr_pos.x_ ||
-				 	prev_pos.x_ >= 0 && 0 > curr_pos.x_)) {
+		if ((prev_pos.x_ < 0 && 0 <= curr_pos.x_) ||
+				 	(prev_pos.x_ >= 0 && 0 > curr_pos.x_)) {
 			bullets_to_delete.push_back(std::find_if( this->bullet_list_.begin(),
 						this->bullet_list_.end(),[&elem](const auto& bullet) {
 					 		return elem.bullet_id == bullet.id();

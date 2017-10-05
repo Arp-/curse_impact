@@ -82,6 +82,8 @@ ship_t::move(ship_event_t::direction dir, const rect_t& gamefield_rect ) {
 				++(this->position_.y_);
 			}
 			break;
+		default:
+			break;
 	}
 }
 //-----------------------------------------------------------------------------//

@@ -85,15 +85,9 @@ class event_list_t {
 			tick_(0),
 			repeat_type_(rt) { }
 
-		event_list_t(bool repeatable) {
-	
-			if (repeatable) {
-				event_list_t(repeat_type::REPEATABLE);
-			} else {
-				event_list_t(repeat_type::SINGULAR);
-			}
-		}
-
+		event_list_t(bool repeatable):
+			event_list_t(
+					repeatable?(repeat_type::REPEATABLE):(repeat_type::SINGULAR)) { }
 
 		~event_list_t() = default;
 

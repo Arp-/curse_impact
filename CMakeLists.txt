@@ -10,7 +10,7 @@ file(GLOB pugixml RELATIVE "${CMAKE_SOURCE_DIR}" "pugixml/src/*.cpp")
 
 #add_library(ncurses IMPORTED)
 
-set (CMAKE_CXX_FLAGS "-std=c++14 -ggdb")
+set (CMAKE_CXX_FLAGS "-std=c++14 -ggdb -pedantic -Wall -Werror -Og")
 
 message("MESSAGE: ${source}")
 
