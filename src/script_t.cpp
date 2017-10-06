@@ -89,9 +89,9 @@ static void print_history(const script_t::history_t& hist) {
 //-----------------------------------------------------------------------------//
 int
 script_t::rect_index_by_name(const std::string& name) const {
-	for (int i = 0; i < this->rectangle_list_.size(); i++) {
+	for (size_t i = 0; i < this->rectangle_list_.size(); i++) {
 		if (this->rectangle_list_[i].first == name) {
-			return i;
+			return static_cast<int>(i);
 		}
 	}
 	return -1;

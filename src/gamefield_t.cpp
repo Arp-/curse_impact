@@ -62,8 +62,8 @@ gamefield_t::gamefield_t(rect_t rect): rect_(rect) {
 }
 //-----------------------------------------------------------------------------//
 const ship_t&
-gamefield_t::ship() const {
-	return this->ship_;
+gamefield_t::player() const {
+	return this->player_;
 }
 //-----------------------------------------------------------------------------//
 const gamefield_t::ship_list_t&
@@ -138,13 +138,13 @@ gamefield_t::move_ship(instruction_t instruction) {
 	auto movement = instruction.movement;
 
 	impl::move_helper<movement_t::UP, impl::dim_t::Y, impl::sign_t::MINUS>(
-			this->rect_, this->ship_, movement);
+			this->rect_, this->player_, movement);
 	impl::move_helper<movement_t::DOWN, impl::dim_t::Y, impl::sign_t::PLUS>(
-			this->rect_, this->ship_, movement);
+			this->rect_, this->player_, movement);
 	impl::move_helper<movement_t::FORWARD, impl::dim_t::X, impl::sign_t::PLUS>(
-			this->rect_, this->ship_, movement);
+			this->rect_, this->player_, movement);
 	impl::move_helper<movement_t::BACKWARD, impl::dim_t::X, impl::sign_t::MINUS>(
-			this->rect_, this->ship_, movement);
+			this->rect_, this->player_, movement);
 
 }
 //-----------------------------------------------------------------------------//
@@ -156,11 +156,11 @@ gamefield_t::move_enemy(int ship_id, ship_event_t::direction dir) {
 }
 //-----------------------------------------------------------------------------//
 void
-gamefield_t::ship_shoot() {
-	const auto& ship_pos = this->ship_.position();
-	const auto& ship_rect = this->ship_.rect();
+gamefield_t::player_shoot() {
+	const auto& ship_pos = this->player_.position();
+	const auto& ship_rect = this->player_.rect();
 	bullet_t bullet { ship_pos.x_ + ship_rect.width_ +1,
-		ship_pos.y_ + (ship_rect.height_ >> 1), this->ship_.speed() +1 };
+		ship_pos.y_ + (ship_rect.height_ >> 1), this->player_.speed() +1 };
 	this->bullet_list_.push_back(bullet);
 }
 //-----------------------------------------------------------------------------//
@@ -343,11 +343,11 @@ gamefield_t::hitcheck(const gamefield_t& prev_gf) {
 			handle_ship_bullet_check(
 					bullets_to_delete, enemies_to_delete, bullet_it, it);
 		}
-		handle_player_enemy_check(enemies_to_delete, it, this->ship_);
+		handle_player_enemy_check(enemies_to_delete, it, this->player_);
 	}
 	for (auto bullet_it = this->enemy_bullet_list_.begin();
 			bullet_it != this->enemy_bullet_list_.end(); ++bullet_it) {
-		handle_player_bullet_check(enemy_bullets_to_delete, bullet_it, this->ship_);
+		handle_player_bullet_check(enemy_bullets_to_delete, bullet_it, this->player_);
 	}
 
 	// Collision between player and enemy bullets

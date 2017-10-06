@@ -50,8 +50,8 @@ class gamefield_t {
 		~gamefield_t() = default;
 
 		template <typename ...Args>
-		void set_ship(Args&& ... args) {
-			this->ship_ = ship_t { args... };
+		void set_player(Args&& ... args) {
+			this->player_ = ship_t { args... };
 		}
 
 		template <typename ...Args>
@@ -59,7 +59,7 @@ class gamefield_t {
 			this->enemy_list_.emplace_back(args...);
 		}
 
-		const ship_t& ship() const;
+		const ship_t& player() const;
 
 		const ship_list_t& enemy_list() const;
 
@@ -73,7 +73,7 @@ class gamefield_t {
 
 		void move_enemy(int ship_id, ship_event_t::direction dir);
 
-		void ship_shoot();
+		void player_shoot();
 
 		void enemy_shoot(int ship_id);
 
@@ -99,7 +99,7 @@ class gamefield_t {
 
 		rect_t rect_;
 
-		ship_t ship_;
+		ship_t player_;
 
 		ship_list_t enemy_list_;
 

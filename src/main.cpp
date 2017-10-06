@@ -92,6 +92,7 @@ static instruction_t get_instruction() {
 	instruction_t instr;
 	instr.movement = movement_t::NOP;
 	instr.attack = attack_t::NOP;
+	instr.other = other_t::NOP;
 
 	char ch = 0;
 	do {
@@ -151,7 +152,7 @@ static void render_clean(gamefield_t& gf) {
 		{ ' ', ' ', ' ' },
 		{ ' ', ' ', ' ' },
 	}};
-	const auto& ship = gf.ship();
+	const auto& ship = gf.player();
 	render_ship(ship, clear_texture);
 	render_bullet_list(gf.bullet_list(), ' ');
 	render_bullet_list(gf.enemy_bullet_list(), ' ');
@@ -165,7 +166,7 @@ static void game_logic(script_t& script, gamefield_t& gf, instruction_t instruct
 	gf.bullet_list_tick();
 	gf.enemy_list_tick();
 	if (instruction.attack == instruction_t::attack_t::SHOOT) {
-		gf.ship_shoot();
+		gf.player_shoot();
 	}
 	gf.hitcheck(prev_gf);
 }
@@ -173,7 +174,7 @@ static void game_logic(script_t& script, gamefield_t& gf, instruction_t instruct
 static void render(gamefield_t& gf,
 		const script_t::texture_ship_assoc_t& assoc_table, const texture_t& player_texture) {
 
-	render_ship(gf.ship(), player_texture);
+	render_ship(gf.player(), player_texture);
 	render_bullet_list(gf.bullet_list(), '-');
 	render_bullet_list(gf.enemy_bullet_list(), '*');
 	render_ship_list(gf.enemy_list(), assoc_table);
@@ -196,16 +197,23 @@ load_player_texture(const std::string path) {
 	}};
 }
 //-----------------------------------------------------------------------------//
+static void print_gameover() {
+	move(2,2);
+	printw("gameover");
+	refresh();
+	sleep(1);
+}
+//-----------------------------------------------------------------------------//
 static void game() {
 
 	gamefield_t gf({140,40});
 	script_t script { gf, RES_DIR };
 	script.read_xml(RES_DIR "/game_script.xml");
-	gf.set_ship(
+	gf.set_player(
 			position_t {3,3},
 			rect_t {3,3},
 			0,
-			0,
+			3,
 			0);
 
 	initscr();
@@ -225,9 +233,21 @@ static void game() {
 		if (instruction.other == instruction_t::other_t::QUIT) {
 			break;
 		}
+		if (gf.player().hp() <= 0) {
+			print_gameover();
+			break;
+		}
+		// if ( no_more_enemies_are_on_the_field) {
+		//   run_level_finish_animation();
+		//   if (!has_next_level()) {
+		//     print_victory();
+		//     break;  // end game with some victory stuff
+		//   }
+		//   load_next_level();
+		// }
 		move(1,1);
 		//printw("instruction %02X, %02X", (int)instruction.movement, (int)instruction.attack );
-		printw("hp: %d\n", gf.ship().hp());
+		printw("hp: %d\n", gf.player().hp());
 		render_clean(gf);
 		game_logic(script, gf, instruction);
 		render(gf, script.texture_ship_assoc(), player_texture);
@@ -240,9 +260,6 @@ static void game() {
 
 }
 //-----------------------------------------------------------------------------//
-
-
-
 int main() {
 
 	//pugi::xml_document doc;

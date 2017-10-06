@@ -17,6 +17,7 @@ struct instruction_t {
 		ULTIMATE
 	};
 	enum class other_t {
+		NOP,
 		QUIT
 	};
 
