@@ -8,6 +8,7 @@
 #include "pugixml.hpp"
 #include "script_t.hpp"
 #include "texture_t.hpp"
+#include "healthbar_t.hpp"
 
 #ifndef RES_DIR
 #	define RES_DIR "res"
@@ -38,10 +39,10 @@ static void render_ship(const ship_t& ship, const texture_t& texture) {
 
 	for (int x = 0; x < rect.width_; x++) {
 		for (int y = 0; y < rect.height_; y++) {
-			move(2,1);
-			printw("x: %d y: %d\n", x, y);
-			move(3,1);
-			printw("size_x: %d, size_y: %d\n", texture.matrix().size(), texture[x].size());
+			//move(2,1);
+			//printw("x: %d y: %d\n", x, y);
+			//move(3,1);
+			//printw("size_x: %d, size_y: %d\n", texture.matrix().size(), texture[x].size());
 			auto tx = texture[y][x];
 			
 			mvaddch(position.y_ + y, position.x_ + x, tx);
@@ -228,6 +229,8 @@ static void game() {
 	auto&& player_texture = 
 		load_player_texture(RES_DIR "/texture/player_ship.txt");
 
+	healthbar_t healthbar(stdscr, { 0, 0 });
+
 	while (true) {
 		instruction_t instruction = get_instruction();
 		if (instruction.other == instruction_t::other_t::QUIT) {
@@ -245,9 +248,10 @@ static void game() {
 		//   }
 		//   load_next_level();
 		// }
-		move(1,1);
 		//printw("instruction %02X, %02X", (int)instruction.movement, (int)instruction.attack );
-		printw("hp: %d\n", gf.player().hp());
+		//printw("hp: %d\n", gf.player().hp());
+		healthbar.update(gf.player().hp());
+		healthbar.display();
 		render_clean(gf);
 		game_logic(script, gf, instruction);
 		render(gf, script.texture_ship_assoc(), player_texture);

@@ -5,7 +5,7 @@
 bullet_t::bullet_t(int x, int y, int speed):
 	position_(x, y),
 	speed_(speed) {
-	
+
 }
 //-----------------------------------------------------------------------------//
 void

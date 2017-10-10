@@ -361,7 +361,7 @@ gamefield_t::hitcheck(const gamefield_t& prev_gf) {
 		const auto& curr_pos = elem.position;
 		if ((prev_pos.x_ < 0 && 0 <= curr_pos.x_) ||
 				 	(prev_pos.x_ >= 0 && 0 > curr_pos.x_)) {
-			bullets_to_delete.push_back(std::find_if( this->bullet_list_.begin(),
+			bullets_to_delete.push_back(std::find_if(this->bullet_list_.begin(),
 						this->bullet_list_.end(),[&elem](const auto& bullet) {
 					 		return elem.bullet_id == bullet.id();
 			}));
@@ -374,9 +374,6 @@ gamefield_t::hitcheck(const gamefield_t& prev_gf) {
 	}
 
 
-	// TODO put enemy bullets to a separate container that way i can 
-	// distignuish them and not make any collision between them
-	// also need a more collect check between them wether they, have corssed paths
 	util::remove_duplicates(bullets_to_delete, [](auto it_a, auto it_b) {
 		return it_a == it_b;
 	});
