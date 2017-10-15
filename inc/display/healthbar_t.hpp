@@ -7,6 +7,8 @@
 #include <vector>
 #include "position_t.hpp"
 
+namespace display {
+
 class healthbar_t {
 
 	public: //-- public functions --//
@@ -43,5 +45,6 @@ class healthbar_t {
 
 };
 
+}
 
 #endif // CURSE_IMPACT_HEALTHBAR_HPP

@@ -1,11 +1,13 @@
-#include "healthbar_t.hpp"
+#include "display/healthbar_t.hpp"
 
-healthbar_t::healthbar_t(WINDOW* win):
+namespace d = display;
+
+d::healthbar_t::healthbar_t(WINDOW* win):
 	healthbar_t(win, { 0, 0 }) {
 
 }
 //-----------------------------------------------------------------------------//
-healthbar_t::healthbar_t(WINDOW* win, const position_t& pos):
+d::healthbar_t::healthbar_t(WINDOW* win, const position_t& pos):
 	win_(win),
 	position_(pos) {
 
@@ -14,7 +16,7 @@ healthbar_t::healthbar_t(WINDOW* win, const position_t& pos):
 }
 //-----------------------------------------------------------------------------//
 void
-healthbar_t::update(int hp) {
+d::healthbar_t::update(int hp) {
 	if (this->cached_hp_ == hp) { return; }
 	this->cached_hp_ = hp;
 
@@ -37,24 +39,24 @@ healthbar_t::update(int hp) {
 }
 //-----------------------------------------------------------------------------//
 void
-healthbar_t::position(const position_t& position) {
+d::healthbar_t::position(const position_t& position) {
 	this->position_ = position;
 }
 //-----------------------------------------------------------------------------//
 const position_t& 
-healthbar_t::position() const {
+d::healthbar_t::position() const {
 	return this->position_;
 }
 //-----------------------------------------------------------------------------//
 void
-healthbar_t::init_texture() {
-	this->texture_.emplace_back("//---------//");
+d::healthbar_t::init_texture() {
+	this->texture_.emplace_back("//---------//------------------------------------");
 	this->texture_.emplace_back("// HP: XXX //");
-	this->texture_.emplace_back("//---------//");
+	this->texture_.emplace_back("//---------//------------------------------------");
 }
 //-----------------------------------------------------------------------------//
 void
-healthbar_t::display() {
+d::healthbar_t::display() {
 	int row_offset = 0;
 	for (const auto& row :  this->texture_) {
 		wmove(this->win_, this->position_.y_ + row_offset, this->position_.x_);

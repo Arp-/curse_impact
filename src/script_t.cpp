@@ -1,5 +1,5 @@
 
-#include "pugixml.hpp"
+#include "pugixml/pugixml.hpp"
 #include "script_t.hpp"
 #include "util.hpp"
 #include "error.hpp"

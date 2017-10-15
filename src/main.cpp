@@ -5,14 +5,17 @@
 #include <ncurses.h>
 #include <unistd.h>
 #include "instruction_t.hpp"
-#include "pugixml.hpp"
+#include "pugixml/pugixml.hpp"
 #include "script_t.hpp"
 #include "texture_t.hpp"
-#include "healthbar_t.hpp"
+#include "display/healthbar_t.hpp"
+#include "display/border_drawer_t.hpp"
 
 #ifndef RES_DIR
 #	define RES_DIR "res"
 #endif
+
+static position_t DRAW_START = { 2, 4 };
 
 
 
@@ -36,7 +39,8 @@ static void render_ship(const ship_t& ship, const texture_t& texture) {
 			//printw("size_x: %d, size_y: %d\n", texture.matrix().size(), texture[x].size());
 			auto tx = texture[y][x];
 			
-			mvaddch(position.y_ + y+3, position.x_ + x+1, tx);
+			mvaddch(position.y_ + y + DRAW_START.y_,
+					position.x_ + x + DRAW_START.x_, tx);
 		}
 	}
 }
@@ -47,7 +51,8 @@ static void render_clean_ship(const ship_t& ship) {
 
 		for (int x = 0; x < rect.width_; x++) {
 			for (int y = 0; y < rect.height_; y++) {
-				mvaddch(position.y_ + y+3, position.x_ + x+1, ' ');
+				mvaddch(position.y_ + y + DRAW_START.y_,
+						position.x_ + x + DRAW_START.x_, ' ');
 			}
 		}
 }
@@ -96,7 +101,7 @@ static instruction_t get_instruction() {
 static void render_bullet_list(const gamefield_t::bullet_list_t& bullet_list, const char texture) {
 	for (const auto& bullet : bullet_list) {
 		const auto& position = bullet.position();
-		mvaddch(position.y_+3, position.x_+1, texture);
+		mvaddch(position.y_ + DRAW_START.y_, position.x_ + DRAW_START.x_, texture);
 	}
 }
 //-----------------------------------------------------------------------------//
@@ -185,10 +190,15 @@ static void game() {
 			3,
 			0);
 
-	initscr();
-	noecho();
-	cbreak();
-	timeout(0);
+	util::scoped_initializer init([]() -> void {
+		initscr();
+		noecho();
+		cbreak();
+		timeout(0);
+	}, []() -> void {
+		nocbreak();
+		endwin();
+	});
 
 
 	//ship_t enemy {{ 60, 10 }, { 3, 3 }, -1, 10};
@@ -197,8 +207,20 @@ static void game() {
 	auto&& player_texture = 
 		load_player_texture(RES_DIR "/texture/player_ship.txt");
 
-	healthbar_t healthbar(stdscr, { 0, 0 });
-	
+	display::healthbar_t healthbar(stdscr, { 0, 0 });
+	//wborder(stdscr, '|', '|', '_', '_', '.', '.', '.', '.');
+	auto&& border_drawer = display::border_drawer_t::builder()
+		.position({DRAW_START.x_ -1 , DRAW_START.y_ -1})
+		.rect({ gf.rect().width_+2, gf.rect().height_+2 })
+		.window(stdscr)
+		.style('|','_','.')
+		.build();
+
+	if (!border_drawer) {
+		fprintf(stderr, "I fucked up the border_drawer");
+		exit(1);
+	}
+
 
 	while (true) {
 		instruction_t instruction = get_instruction();
@@ -224,12 +246,11 @@ static void game() {
 		render_clean(gf);
 		game_logic(script, gf, instruction);
 		render(gf, script.texture_ship_assoc(), player_texture);
+		border_drawer->draw();
 		refresh();
 		usleep(100000);
 	}
 
-	nocbreak();
-	endwin();
 
 }
 //-----------------------------------------------------------------------------//
