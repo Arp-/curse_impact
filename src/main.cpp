@@ -22,15 +22,6 @@ using bullet_texture_t = char;
 // STATIC CONSTANTS
 //-----------------------------------------------------------------------------//
 // FUNCTIONS FOR RENDERING
-//static void print_texture(const texture_t& texture) {
-//	const auto& cont = texture.matrix();
-//	for (const auto& row : cont) {
-//		for (const auto& elem : row) {
-//			putc(elem, stdout);
-//		}
-//		putc('\n',stdout);
-//	}
-//}
 //-----------------------------------------------------------------------------//
 static void render_ship(const ship_t& ship, const texture_t& texture) {
 	const auto& rect =  ship.rect();
@@ -45,7 +36,7 @@ static void render_ship(const ship_t& ship, const texture_t& texture) {
 			//printw("size_x: %d, size_y: %d\n", texture.matrix().size(), texture[x].size());
 			auto tx = texture[y][x];
 			
-			mvaddch(position.y_ + y, position.x_ + x, tx);
+			mvaddch(position.y_ + y+3, position.x_ + x+1, tx);
 		}
 	}
 }
@@ -56,34 +47,10 @@ static void render_clean_ship(const ship_t& ship) {
 
 		for (int x = 0; x < rect.width_; x++) {
 			for (int y = 0; y < rect.height_; y++) {
-				mvaddch(position.y_ + y, position.x_ + x, ' ');
+				mvaddch(position.y_ + y+3, position.x_ + x+1, ' ');
 			}
 		}
 }
-//-----------------------------------------------------------------------------//
-//static void render_gamefield(const gamefield_t& gamefield) {
-//
-//	const auto& rect = gamefield.rect();
-//
-//	for (int i = 0; i < rect.width_; i++) {
-//		mvaddch(0,i, 'X');
-//		mvaddch(rect.height_-1, i, 'X');
-//	}
-//	for (int i = 0; i < rect.height_; i++) {
-//		mvaddch(i, 0, 'X');
-//		mvaddch(i, rect.width_-1, 'X');
-//	}
-//
-//	const auto& ship = (gamefield.ship());
-//	texture_t t = {{
-//			{ 'Y', 'Y', 'Y'},
-//			{ 'Y', 'Y', 'Y'},
-//			{ 'Y', 'Y', 'Y'},
-//	}};
-//	render_ship(ship, t);
-//
-//	refresh();
-//}
 //-----------------------------------------------------------------------------//
 static instruction_t get_instruction() {
 	using movement_t = instruction_t::movement_t;
@@ -129,7 +96,7 @@ static instruction_t get_instruction() {
 static void render_bullet_list(const gamefield_t::bullet_list_t& bullet_list, const char texture) {
 	for (const auto& bullet : bullet_list) {
 		const auto& position = bullet.position();
-		mvaddch(position.y_, position.x_, texture);
+		mvaddch(position.y_+3, position.x_+1, texture);
 	}
 }
 //-----------------------------------------------------------------------------//
@@ -199,6 +166,7 @@ load_player_texture(const std::string path) {
 }
 //-----------------------------------------------------------------------------//
 static void print_gameover() {
+	// TODO ascii art
 	move(2,2);
 	printw("gameover");
 	refresh();
@@ -207,7 +175,7 @@ static void print_gameover() {
 //-----------------------------------------------------------------------------//
 static void game() {
 
-	gamefield_t gf({140,40});
+	gamefield_t gf({140,30});
 	script_t script { gf, RES_DIR };
 	script.read_xml(RES_DIR "/game_script.xml");
 	gf.set_player(
@@ -230,6 +198,7 @@ static void game() {
 		load_player_texture(RES_DIR "/texture/player_ship.txt");
 
 	healthbar_t healthbar(stdscr, { 0, 0 });
+	
 
 	while (true) {
 		instruction_t instruction = get_instruction();
@@ -266,21 +235,6 @@ static void game() {
 //-----------------------------------------------------------------------------//
 int main() {
 
-	//pugi::xml_document doc;
-	//pugi::xml_parse_result result = doc.load_file("res/game_script.xml");
-	//std::cout << "Load result: " << result.description() << std::endl;
-
-	//std::cout << "hp: " << doc.child("level").child("enemy").attribute("hp").value() << std::endl;
-
-
 	game();
-	//
-	//texture_t textureA = texture_t::read_from_file("./res/texture/enemy_A.txt");
-	//print_texture(textureA);
-	//texture_t textureB = texture_t::read_from_file("./res/texture/enemy_B.txt");
-	//print_texture(textureB);
-	//gamefield_t gf({100,40});
-	//script_t script { gf };
-	//script.read_xml("res/game_script.xml");
 
 }

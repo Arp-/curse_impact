@@ -15,6 +15,9 @@ healthbar_t::healthbar_t(WINDOW* win, const position_t& pos):
 //-----------------------------------------------------------------------------//
 void
 healthbar_t::update(int hp) {
+	if (this->cached_hp_ == hp) { return; }
+	this->cached_hp_ = hp;
+
 	if (hp > 3) { 
 		throw std::runtime_error { 
 			std::string { "healthpoints are greater than that is displayable " } +

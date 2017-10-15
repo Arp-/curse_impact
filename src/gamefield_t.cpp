@@ -303,7 +303,7 @@ handle_player_bullet_check(bullet_list_T& bullets_to_delete,
 	}
 }
 //-----------------------------------------------------------------------------//
-const gamefield_t::distance_vec_t
+gamefield_t::distance_vec_t
 gamefield_t::bullet_distance() const {
 	distance_vec_t distance;
 

@@ -90,7 +90,7 @@ class gamefield_t {
 
 		ship_list_t::iterator find_enemy(int ship_id);
 
-		const distance_vec_t bullet_distance() const;
+		distance_vec_t bullet_distance() const;
 
 
 	private: //-- private stuff --// 

@@ -38,6 +38,8 @@ class healthbar_t {
 
 		std::vector<std::string> texture_;
 
+		int cached_hp_;
+
 
 };
 
