@@ -25,7 +25,7 @@ include_directories("${CMAKE_SOURCE_DIR}/inc" "${install_dir}/inc")
 
 message("BINARY: " "${CMAKE_BINARY_DIR}")
 
-set (CMAKE_CXX_FLAGS "-std=c++14 -ggdb -pedantic -Wall -Werror -Og")
+set (CMAKE_CXX_FLAGS "-std=c++14 -ggdb -pedantic -Wall -Werror -O0")
 
 message("MESSAGE: ${source}")
 

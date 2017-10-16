@@ -145,15 +145,18 @@ namespace util {
 			naive_optional& operator=(const naive_optional& opt) {
 				this->init_ = opt.init_;
 				this->value_ = opt.value_;
+				return *this;
 			}
 
 			naive_optional& operator=(nullopt_t opt) {
 				this->init_ = false;
+				return *this;
 			}
 
 			naive_optional& operator=(const T& value) {
 				this->init_ = true;
 				this->value_ = value;
+				return *this;
 			}
 
 

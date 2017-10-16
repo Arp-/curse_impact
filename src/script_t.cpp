@@ -287,3 +287,12 @@ const script_t::texture_ship_assoc_t&
 script_t::texture_ship_assoc() const {
 	return this->texture_ship_association_;
 }
+//-----------------------------------------------------------------------------//
+bool
+script_t::end() const {
+	auto max = std::max(this->history_.begin(), this->history_.end(), 
+			[](const auto& pair1, const auto& pair2) {
+		return pair1->first < pair2->first;
+	});
+	return static_cast<long>(max->first) < this->time_;
+}

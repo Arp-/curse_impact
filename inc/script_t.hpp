@@ -38,6 +38,8 @@ class script_t {
 
 		const texture_ship_assoc_t& texture_ship_assoc() const;
 
+		bool end() const;
+
 
 	private: //-- private functions --//
 

@@ -15,14 +15,10 @@
 #	define RES_DIR "res"
 #endif
 
-static position_t DRAW_START = { 2, 4 };
-
-
-
-using ship_texture_t = std::array<std::array<char, 3>, 3>;
-using bullet_texture_t = char;
 //-----------------------------------------------------------------------------//
 // STATIC CONSTANTS
+//-----------------------------------------------------------------------------//
+static position_t DRAW_START = { 2, 4 };
 //-----------------------------------------------------------------------------//
 // FUNCTIONS FOR RENDERING
 //-----------------------------------------------------------------------------//
@@ -173,9 +169,17 @@ load_player_texture(const std::string path) {
 static void print_gameover() {
 	// TODO ascii art
 	move(2,2);
-	printw("gameover");
+	printw("GAME OVER (BITCH)");
 	refresh();
 	sleep(1);
+}
+//-----------------------------------------------------------------------------//
+static void run_level_finish_animation() {
+	move(2,2);
+	printw("VICTORY");
+	refresh();
+	sleep(1);
+
 }
 //-----------------------------------------------------------------------------//
 static void game() {
@@ -213,7 +217,7 @@ static void game() {
 		.position({DRAW_START.x_ -1 , DRAW_START.y_ -1})
 		.rect({ gf.rect().width_+2, gf.rect().height_+2 })
 		.window(stdscr)
-		.style('|','_','.')
+		.style(' ','_',' ')
 		.build();
 
 	if (!border_drawer) {
@@ -231,14 +235,15 @@ static void game() {
 			print_gameover();
 			break;
 		}
-		// if ( no_more_enemies_are_on_the_field) {
-		//   run_level_finish_animation();
-		//   if (!has_next_level()) {
-		//     print_victory();
-		//     break;  // end game with some victory stuff
-		//   }
-		//   load_next_level();
-		// }
+		 if (script.end() && gf.enemy_list().empty()) {
+		   run_level_finish_animation();
+			 break;
+		   //if (!has_next_level()) {
+		   //  print_victory();
+		   //  break;  // end game with some victory stuff
+		   //}
+		   //load_next_level();
+		 }
 		//printw("instruction %02X, %02X", (int)instruction.movement, (int)instruction.attack );
 		//printw("hp: %d\n", gf.player().hp());
 		healthbar.update(gf.player().hp());
