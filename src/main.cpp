@@ -166,17 +166,27 @@ load_player_texture(const std::string path) {
 	}};
 }
 //-----------------------------------------------------------------------------//
-static void print_gameover() {
+static position_t get_middle_choords(WINDOW* win) {
+	position_t pos;
+	getmaxyx(win, pos.y_, pos.x_);
+	pos.x_ >>= 1;
+	pos.y_ >>= 1;
+	return pos;
+}
+//-----------------------------------------------------------------------------//
+static void print_gameover(WINDOW* win) {
 	// TODO ascii art
-	move(2,2);
-	printw("GAME OVER (BITCH)");
+	wclear(win);
+	position_t pos = get_middle_choords(win);
+	mvwprintw(win, pos.y_, pos.x_,"GAME OVER (BITCH)");
 	refresh();
 	sleep(1);
 }
 //-----------------------------------------------------------------------------//
-static void run_level_finish_animation() {
-	move(2,2);
-	printw("VICTORY");
+static void run_level_finish_animation(WINDOW* win) {
+	wclear(win);
+	position_t pos = get_middle_choords(win);
+	mvwprintw(win, pos.y_, pos.x_, "VICTORY");
 	refresh();
 	sleep(1);
 
@@ -232,11 +242,11 @@ static void game() {
 			break;
 		}
 		if (gf.player().hp() <= 0) {
-			print_gameover();
+			print_gameover(stdscr);
 			break;
 		}
 		 if (script.end() && gf.enemy_list().empty()) {
-		   run_level_finish_animation();
+		   run_level_finish_animation(stdscr);
 			 break;
 		   //if (!has_next_level()) {
 		   //  print_victory();

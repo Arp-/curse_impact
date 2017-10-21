@@ -319,7 +319,6 @@ gamefield_t::bullet_distance() const {
 							bullet_it->position().y_ - it->position().y_
 				}});
 			}
-
 		}
 	}
 	return distance;
@@ -386,7 +385,6 @@ gamefield_t::hitcheck(const gamefield_t& prev_gf) {
 		return it_a == it_b;
 	});
 
-
 	for (auto it : bullets_to_delete) {
 		this->bullet_list_.erase(it);
 	}
@@ -403,6 +401,4 @@ gamefield_t::find_enemy(int ship_id) {
 	return std::find_if(this->enemy_list_.begin(), this->enemy_list_.end(),
 			[ship_id](const ship_t& ship) { return ship.id() == ship_id; });
 }
-
-
 
