@@ -10,6 +10,7 @@
 #include "texture_t.hpp"
 #include "display/healthbar_t.hpp"
 #include "display/border_drawer_t.hpp"
+#include "renderer/test.hpp"
 
 #ifndef RES_DIR
 #	define RES_DIR "res"
@@ -270,6 +271,7 @@ static void game() {
 }
 //-----------------------------------------------------------------------------//
 int main() {
+
 
 	game();
 
