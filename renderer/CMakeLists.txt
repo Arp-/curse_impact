@@ -1,4 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
+## Note calling this a renderer is like calling notepad a text editor
+## It feels like i'm mocking graphics programmers, but oh well
 project(renderer)
 
 include(ExternalProject)

@@ -16,6 +16,8 @@ namespace renderer { namespace flavour {
 
 		std::vector<std::vector<char>> render(const canvas_type& str);
 
+		std::vector<char> accumulate(decltype(this->render()) rendered_object)
+
 	};
 
 }} // namespace flavour // namespace renderer
