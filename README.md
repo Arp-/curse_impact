@@ -1,6 +1,21 @@
 # curse_impact
 A space impact clone for terminal emulators using ncurses
 
+## Compile
+
+iniside project root
+```
+git submodule init
+git submodule update
+mkdir build
+cd build
+cmake ..
+make
+```
+
+TODO move pugixml download build && install into CMakeLists, and delete
+submodule, because it looks friendlyer
+
 Features still missing:
 * I shoud make some textures that indicate landscape for the game levels like in the original space impact.
 * There should be ultimate attack for the ship
