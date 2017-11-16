@@ -10,6 +10,7 @@ file(GLOB_RECURSE source RELATIVE "${CMAKE_SOURCE_DIR}" "src/*.cpp")
 #file(GLOB pugixml RELATIVE "${CMAKE_SOURCE_DIR}" "pugixml/src/*.cpp")
 
 
+
 #add_library(ncurses IMPORTED)
 ExternalProject_Add(pugixml
   SOURCE_DIR "${CMAKE_SOURCE_DIR}/pugixml"
@@ -61,8 +62,9 @@ add_dependencies(curse_impact pugixml)
 #add_dependencies(curse_impact renderer)
 
 
-target_link_libraries(curse_impact "ncurses")
-target_link_libraries(curse_impact "ncursesw")
-target_link_libraries(curse_impact "tinfo")
+exec_program("pkg-config ncurses --libs" OUTPUT_VARIABLE NCURSES_LIBS)
+message("NC_LIBS: ${NCURSES_LIBS}")
+
+target_link_libraries(curse_impact ${NCURSES_LIBS})
 target_link_libraries(curse_impact "${pugixml_install_dir}/bin/libpugixml.a")
 #target_link_libraries(curse_impact "${renderer_install_dir}/bin/librenderer.a")
