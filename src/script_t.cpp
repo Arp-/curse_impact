@@ -6,9 +6,8 @@
 #include <iostream>
 #include <algorithm>
 
-#ifdef DEBUG
+# pragma message ("karacsony")
 # include <ncurses.h>
-#endif
 
 enum class dimension {
 	X,
@@ -188,7 +187,7 @@ script_t::read_enemy_ship_list(const pugi::xml_node& root) {
 	for (auto ship = root.child("enemy");
 			ship; ship = ship.next_sibling("enemy")) {
 
-		int time = atoi(ship.attribute("time").value());
+		time_t time = atoll(ship.attribute("time").value());
 		util::set_if_undef<event_list_t>(this->history_, time);
 
 		appear_event_t&& ev = get_event_from_ship_node(ship);
@@ -290,9 +289,9 @@ script_t::texture_ship_assoc() const {
 //-----------------------------------------------------------------------------//
 bool
 script_t::end() const {
-	auto max = std::max(this->history_.begin(), this->history_.end(), 
+	auto max = std::max_element(this->history_.begin(), this->history_.end(), 
 			[](const auto& pair1, const auto& pair2) {
-		return pair1->first < pair2->first;
+		return pair1.first < pair2.first;
 	});
-	return static_cast<long>(max->first) < this->time_;
+	return (max->first) < this->time_;
 }

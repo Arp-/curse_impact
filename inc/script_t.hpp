@@ -16,7 +16,7 @@ class script_t {
 	public:
 
 		using event_list_t = std::vector<appear_event_t>;
-		using history_t = std::map<int, event_list_t>;
+		using history_t = std::map<time_t, event_list_t>;
 		using texture_list_t = std::vector<std::pair<std::string, texture_t>>;
 		using rectangle_list_t = std::vector<std::pair<std::string, rect_t>>;
 

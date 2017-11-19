@@ -31,12 +31,27 @@
 	<enemy time="40" hp="1" x="-3" y="4/6" speed="-1" texture_ref="enemy_A" rect="rect_DEFAULT" />
 	<enemy time="45" hp="1" x="-3" y="3/6" speed="-1" texture_ref="enemy_A" rect="rect_DEFAULT" />
 	<enemy time="50" hp="1" x="-3" y="2/6" speed="-2" texture_ref="enemy_A" rect="rect_DEFAULT" />
+	<enemy time="55" hp="1" x="-3" y="2/6" speed="-2" texture_ref="enemy_A" rect="rect_DEFAULT" />
+	<enemy time="60" hp="1" x="-3" y="2/6" speed="-2" texture_ref="enemy_A" rect="rect_DEFAULT" />
+	<enemy time="65" hp="1" x="-3" y="2/6" speed="-2" texture_ref="enemy_A" rect="rect_DEFAULT" />
+	<enemy time="70" hp="1" x="-3" y="2/6" speed="-2" texture_ref="enemy_A" rect="rect_DEFAULT" />
+	<enemy time="75" hp="1" x="-3" y="2/6" speed="-2" texture_ref="enemy_A" rect="rect_DEFAULT" />
+	<enemy time="80" hp="1" x="-3" y="2/6" speed="-2" texture_ref="enemy_A" rect="rect_DEFAULT" />
+	<enemy time="85" hp="1" x="-3" y="2/6" speed="-2" texture_ref="enemy_A" rect="rect_DEFAULT" />
+	<enemy time="90" hp="1" x="-3" y="2/6" speed="-2" texture_ref="enemy_A" rect="rect_DEFAULT" />
+	<enemy time="95" hp="1" x="-3" y="2/6" speed="-2" texture_ref="enemy_A" rect="rect_DEFAULT" />
+	<enemy time="100" hp="1" x="-3" y="2/6" speed="-2" texture_ref="enemy_B" rect="rect_DEFAULT" />
+	<enemy time="105" hp="1" x="-3" y="2/6" speed="-2" texture_ref="enemy_B" rect="rect_DEFAULT" />
+	<enemy time="110" hp="1" x="-3" y="2/6" speed="-2" texture_ref="enemy_B" rect="rect_DEFAULT" />
+	<enemy time="115" hp="1" x="-3" y="2/6" speed="-2" texture_ref="enemy_B" rect="rect_DEFAULT" />
+	<enemy time="120" hp="1" x="-3" y="2/6" speed="-2" texture_ref="enemy_B" rect="rect_DEFAULT" />
+	<enemy time="125" hp="1" x="-3" y="2/6" speed="-2" texture_ref="enemy_B" rect="rect_DEFAULT" />
 	
 
 
 
 	<!-- LAST ONE IS THE BOSS OF THE MAP -->
-	<enemy time="10" hp="100" x="-10" y="2/6" speed="0" texture_ref="enemy_BOSS" rect="rect_BOSS" repeat="true">
+	<enemy time="200" hp="100" x="-10" y="2/6" speed="0" texture_ref="enemy_BOSS" rect="rect_BOSS" repeat="true">
 		<move offset="2" direction="up" />
 		<move offset="4" direction="up" />
 		<move offset="6" direction="up" />
