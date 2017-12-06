@@ -21,6 +21,7 @@ namespace renderer {
 			using poligon_base_t::cend;
 			using poligon_base_t::empty;
 
+			// NOTE coordinates from  this point onwards will be all relative to origo
 			inline util::optional<rect_t> containing_rect() const {
 				auto it = this->cbegin();
 				if (it == this->cend()) {
@@ -30,15 +31,18 @@ namespace renderer {
 				coord_t max = *it;
 				++it;
 				for (;it != this->cend(); ++it) {
-					if (it->x < 0) {
-						min.x += it->x;
-					} else {
-						max.x += it->x;
+					if (it->x < min.x) {
+						min.x = it->x;
+					} 
+					if (it->x > max.x) {
+						max.x = it->x;
 					}
-					if (it->y < 0) {
-						min.y += it->y;
-					} else {
-						max.y += it->y;
+
+					if (it->y < min.y) {
+						min.y = it->y;
+					}
+					if (it->y > max.y) {
+						max.y = it->y;
 					}
 				}
 

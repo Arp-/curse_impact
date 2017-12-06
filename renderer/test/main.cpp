@@ -36,7 +36,7 @@ TEST_CASE ("test poligon contining_rect") {
 
 	renderer::canvas_t<test_flavour> canvas;
 	renderer::poligon_t p1 {{1,2}, {1,1}, {0,1}};
-	renderer::poligon_t p2 {{1,2}, {1,1}, {0,2}};
+	renderer::poligon_t p2 {{1,2}, {1,1}, {1,2}};
 	renderer::poligon_t p3 {{1,2}, {9,1}, {0,1}};
 	renderer::poligon_t p4 {};
 	canvas.add(p1, { 1, 2 });
@@ -54,7 +54,7 @@ TEST_CASE ("test poligon contining_rect") {
 
 TEST_CASE ("test info") {
 
-	renderer::pixel_info inf { 0.0f, renderer::pixel_info::side::UP, 0 };
+	renderer::pixel_info inf { renderer::pixel_info::axis::X_EQ_0, renderer::pixel_info::side::LEFT, 0.0f };
 	std::cout << sizeof(inf) << std::endl;
 
 

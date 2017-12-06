@@ -5,21 +5,21 @@
 namespace renderer {
 
 	struct pixel_info {
-		enum class side {
-			FULL = 0,
-			UP,
-			UP_LEFT,
-			UP_RIGHT,
-			RIGHT,
-			LEFT,
-			DOWN,
-			DOWN_LEFT,
-			DOWN_RIGHT,
+		enum class axis {
+			X_EQ_0,       // -
+			Y_EQ_0,       // |
+			X_EQ_MINUS_X, //
+			X_EQ_PLUS_X,  // /
 		};
 
-		float containment;
+		enum class side {
+			LEFT,
+			RIGHT,
+		};
+
+		axis axis;
 		side side;
-		unsigned depth;
+		float percentage; // should be between 1.0 and 0.0 inclusive
 	};
 
 
