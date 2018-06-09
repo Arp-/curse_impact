@@ -5,6 +5,7 @@
 #include <iomanip>
 #include "coord_t.hpp"
 #include "pixel_info.hpp"
+#include "polygon_t.hpp"
 
 
 struct test_flavour {
@@ -22,9 +23,16 @@ struct test_flavour {
 
 };
 
-std::ostream& operator<<(std::ostream& out,
-		const std::pair<renderer::coord_t, renderer::coord_t>& rect) {
-	return out << "rect: " << rect.first << ", " << rect.second;
+
+renderer::canvas_t<test_flavour> make_canvas() {
+	renderer::canvas_t<test_flavour> canvas;
+	renderer::polygon_t p1 {{1,2}, {1,1}, {0,1}};
+	renderer::polygon_t p2 {{1,0}, {1,1}, {1,2}};
+	renderer::polygon_t p3 {{1,2}, {9,1}, {0,1}};
+	canvas.add(p1, { 1, 2 });
+	canvas.add(p2, { 1, 3 });
+	canvas.add(p3, { 1, 3 });
+	return canvas;
 }
 
 
@@ -32,13 +40,13 @@ TEST_CASE ("macska") {
 	REQUIRE(1 == 1);
 }
 
-TEST_CASE ("test poligon contining_rect") {
-
+TEST_CASE ("test polygon contining_rect") {
+	puts(__PRETTY_FUNCTION__);
 	renderer::canvas_t<test_flavour> canvas;
-	renderer::poligon_t p1 {{1,2}, {1,1}, {0,1}};
-	renderer::poligon_t p2 {{1,2}, {1,1}, {1,2}};
-	renderer::poligon_t p3 {{1,2}, {9,1}, {0,1}};
-	renderer::poligon_t p4 {};
+	renderer::polygon_t p1 {{1,2}, {1,1}, {0,1}};
+	renderer::polygon_t p2 {{1,2}, {1,1}, {1,2}};
+	renderer::polygon_t p3 {{1,2}, {9,1}, {0,1}};
+	renderer::polygon_t p4 {};
 	canvas.add(p1, { 1, 2 });
 	canvas.add(p2, { 1, 3 });
 	canvas.add(p3, { 1, 3 });
@@ -50,14 +58,35 @@ TEST_CASE ("test poligon contining_rect") {
 	std::cout << "p2: " << *p2.containing_rect() << std::endl;
 	std::cout << "p3: " << *p3.containing_rect() << std::endl;
 	std::cout << "p4: " << *p4.containing_rect() << std::endl;
+
+}
+
+TEST_CASE ("canvas scale into") {
+	puts(__PRETTY_FUNCTION__);
+	renderer::canvas_t<test_flavour> canvas = make_canvas();
+
+	std::cout << "canvas: " << *canvas.containing_rect() << std::endl;
+	for (const auto& poly : canvas) {
+		std::cout << "old_poly: " << poly.first << std::endl;
+	}
+	auto new_canvas = canvas.scale_into({{0,0},{100, 100}});
+	std::cout << "new_canvas: " << *new_canvas.containing_rect() << std::endl;
+	for (const auto& poly : new_canvas) {
+		std::cout << "new_poly: " << poly.first << std::endl;
+	}
+
+//	auto new2_canvas = canvas.scale_into({{30,30},{40, 40}});
+//	std::cout << "new2_canvas: " << *new2_canvas.containing_rect() << std::endl;
+//	for (const auto& poly : new2_canvas) {
+//		std::cout << "poly: " << *poly.first.containing_rect() << std::endl;
+//	}
+
 }
 
 TEST_CASE ("test info") {
 
 	renderer::pixel_info inf { renderer::pixel_info::axis::X_EQ_0, renderer::pixel_info::side::LEFT, 0.0f };
-	std::cout << sizeof(inf) << std::endl;
-
-
+	std::cout << "info_size: " << sizeof(inf) << std::endl;
 }
 
 

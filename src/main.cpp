@@ -245,15 +245,15 @@ static void game() {
 			print_gameover(stdscr);
 			break;
 		}
-		 if (script.end() && gf.enemy_list().empty()) {
-		   run_level_finish_animation(stdscr);
-			 break;
-		   //if (!has_next_level()) {
-		   //  print_victory();
-		   //  break;  // end game with some victory stuff
-		   //}
-		   //load_next_level();
-		 }
+		if (script.end() && gf.enemy_list().empty()) {
+			run_level_finish_animation(stdscr);
+			break;
+			//if (!has_next_level()) {
+			//  print_victory();
+			//  break;  // end game with some victory stuff
+			//}
+			//load_next_level();
+		}
 		//printw("instruction %02X, %02X", (int)instruction.movement, (int)instruction.attack );
 		//printw("hp: %d\n", gf.player().hp());
 		healthbar.update(gf.player().hp());

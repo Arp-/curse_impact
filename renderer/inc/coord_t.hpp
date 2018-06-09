@@ -24,6 +24,20 @@ namespace renderer {
 		return out << "{" << t.x << ", " << t.y << "}";
 	}
 
+	inline coord_t operator+(const coord_t& ch1, const coord_t& ch2) {
+		return coord_t { 
+			ch1.x + ch2.x,
+			ch1.y + ch2.y,
+		};
+	}
+
+	inline coord_t operator-(const coord_t ch1, const coord_t& ch2) {
+		return coord_t {
+			ch1.x - ch2.x,
+			ch1.y - ch2.y,
+		};
+	}
+
 
 } // namespace renderer
 

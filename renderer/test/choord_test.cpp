@@ -1,5 +1,6 @@
 
 #include <catch.hpp>
+#include "scale.hpp"
 #include "coord_t.hpp"
 
 SCENARIO("choordinates can be compared to each other") {

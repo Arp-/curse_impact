@@ -8,7 +8,7 @@ namespace renderer {
 		enum class axis {
 			X_EQ_0,       // -
 			Y_EQ_0,       // |
-			X_EQ_MINUS_X, //
+			X_EQ_MINUS_X, // backslash
 			X_EQ_PLUS_X,  // /
 		};
 

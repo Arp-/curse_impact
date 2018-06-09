@@ -6,6 +6,7 @@
 
 namespace renderer { namespace util {
 
+
 	template <typename T>
 	struct equality_compareable {
 		// TODO verify if T has operator != defined
@@ -45,6 +46,7 @@ namespace renderer { namespace util {
 			transitive_compareable& operator=(transitive_compareable&&) = default;
 			transitive_compareable& operator=(const transitive_compareable&) = default;
 	};
+
 
 
 
