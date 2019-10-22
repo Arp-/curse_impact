@@ -10,8 +10,8 @@ namespace renderer { namespace util {
 	template <typename T>
 	struct equality_compareable {
 		// TODO verify if T has operator != defined
-		inline bool operator==(const T& elem) {
-			return !(*static_cast<T*>(this) != elem);
+		inline bool operator==(const T& elem) const {
+			return !(*static_cast<const T*>(this) != elem);
 		}
 
 		protected:
@@ -51,10 +51,6 @@ namespace renderer { namespace util {
 
 
 #if 0
-	// IMPORTANT!!! DO NOT USE THIS IN PRODUCTION, I ONLY DID THIS BECAUSE OF
-	// CURIOSITY, at first, but then because of lazyness copied here,
-	// AND SHOULD USE std::experimental::optional or std::optional if
-	// available.
 	template <typename T>
 	class naive_optional {
 
@@ -117,6 +113,41 @@ namespace renderer { namespace util {
 #endif
 	template <typename T>
 	using optional = std::experimental::optional<T>;
+
+	inline int is_even(int a) {
+		return a % 2 == 0;
+	}
+	// greated common divisor
+	inline int binary_gcd(int a, int b) {
+		if (a == 1 || b == 1) {
+			return 1;
+		}
+		if (a == 0) {
+			return b;
+		}
+		if (b == 0) {
+			return a;
+		}
+
+		int d = 0;
+		while (is_even(a) && is_even(b)) {
+			a >>= 1;
+			b >>= 1;
+			d++;
+		}
+		while (a != b) {
+			if (is_even(a)) {
+				a >>= 1;
+			} else if (is_even(b)) {
+				b >>= 1;
+			} else if (a > b) {
+				a = (a-b)/2;
+			} else {
+				b = (b-a)/2;
+			}
+		}
+		return a * (1 << d);
+	}
 
 
 

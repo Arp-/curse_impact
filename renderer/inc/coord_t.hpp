@@ -14,7 +14,7 @@ namespace renderer {
 		int x;
 		int y;
 
-		inline bool operator!=(const coord_t& ch) {
+		inline bool operator!=(const coord_t& ch) const {
 			return this->x != ch.x || this->y != ch.y;
 		}
 

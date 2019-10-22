@@ -123,8 +123,10 @@ namespace impl {
 		const auto& sh_rect = ship.rect();
 
 		if (inst == inst_V) {
-			position_t pos = { sh_pos.x_ + impl::add<dim_t::X, dim_V, sign_V>::value,
-				sh_pos.y_ + impl::add<dim_t::Y, dim_V, sign_V>::value };
+			position_t pos = {
+				sh_pos.x_ + impl::add<dim_t::X, dim_V, sign_V>::value,
+				sh_pos.y_ + impl::add<dim_t::Y, dim_V, sign_V>::value
+			};
 			if (is_ship_in_bound(gf_rect, pos, sh_rect)) {
 				ship.position(pos);
 			}

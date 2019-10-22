@@ -6,6 +6,7 @@
 #include "coord_t.hpp"
 #include "pixel_info.hpp"
 #include "polygon_t.hpp"
+#include "algorithm.hpp"
 
 
 struct test_flavour {
@@ -87,6 +88,28 @@ TEST_CASE ("test info") {
 
 	renderer::pixel_info inf { renderer::pixel_info::axis::X_EQ_0, renderer::pixel_info::side::LEFT, 0.0f };
 	std::cout << "info_size: " << sizeof(inf) << std::endl;
+}
+
+TEST_CASE ("winding number") {
+	using renderer::polygon_t;
+	using renderer::coord_t;
+	polygon_t poly { {0, 0}, {0, 2}, {2, 0} };
+	coord_t point_inside = {1, 1};
+	coord_t point_outside_right = {2, 2};
+	coord_t point_outside_left = {-1, 0};
+	coord_t point_outside_up = {0, 3};
+	coord_t point_outside_down = {1, -1};
+	REQUIRE(true == point_inclusion(poly, point_inside));
+	REQUIRE(false == point_inclusion(poly, point_outside_right));
+	REQUIRE(false == point_inclusion(poly, point_outside_left));
+	REQUIRE(false == point_inclusion(poly, point_outside_up));
+	REQUIRE(false == point_inclusion(poly, point_outside_down));
+	REQUIRE(false == point_inclusion(poly, coord_t{ 0, 3}));
+	std::vector<coord_t> points_on = { {0,0}, {0,1}, {0,2}, {1,0}, {1,1}, {2,0} };
+	for (const auto& p : points_on) {
+		REQUIRE(true == point_inclusion(poly, p));
+	}
+
 }
 
 

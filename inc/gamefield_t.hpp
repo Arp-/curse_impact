@@ -21,8 +21,8 @@ class gamefield_t {
 		using bullet_id_t = unsigned;
 
 		struct distance_t {
-			unsigned enemy_bullet_id;
-			unsigned bullet_id;
+			enemy_bullet_id_t enemy_bullet_id;
+			bullet_id_t bullet_id;
 			position_t position;
 
 			inline bool operator!=(distance_t d) const {
