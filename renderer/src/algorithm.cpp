@@ -3,6 +3,8 @@
 
 // returns 1 if the number is negative, otherwise 0
 #define NEG(X) (assert(sizeof(X) == sizeof(unsigned)), (X) & ~(-1u >> 1) && 1)
+static bool dbg = true;
+#define DBG(...) if (dbg) { printf(__VA_ARGS__); }
 
 static int is_left(
 		const renderer::coord_t& o, const renderer::coord_t& a, const renderer::coord_t& b) {
@@ -14,15 +16,23 @@ static bool is_between(int num, int begin, int end) {
 	if (begin > end) {
 		std::swap(begin, end);
 	}
+	DBG("begin %d, num: %d, end: %d\n", begin, num, end);
 	return begin <= num && num <= end;
 }
 //-----------------------------------------------------------------------------//
 static bool is_on_line(
 		const renderer::coord_t& o, const renderer::coord_t& a, const renderer::coord_t& b) {
 	if ((b.x - a.x) == 0) {
-		return is_between(o.y, b.y, a.y) && o.x == (b.x - a.x);
+		DBG("is horizontal\n");
+		return is_between(o.y, b.y, a.y) && o.x == a.x;
 	}
-	return is_between(o.x, a.x, b.x) && o.y - a.y == (b.y - a.y)/(b.x - a.x) * o.x;
+	printf("is_between(%d, %d, %d): %d\n", o.x,a.x,b.x, is_between(o.x,a.x,b.x));
+	printf("is_between(%d, %d, %d): %d\n", o.y,a.y,b.y, is_between(o.y,a.y,b.y));
+	printf("oy-ay = %d\n", o.y-a.y);
+	printf("other: %lf\n", (double)(b.y-a.y)/(b.x-a.x) * (o.x-a.x));
+	return is_between(o.x, a.x, b.x)
+		&& is_between(o.y, a.y, b.y)
+		&& ( (o.y-a.y) * (b.x-a.x) == (b.y-a.y) * (o.x-a.x) );
 }
 //-----------------------------------------------------------------------------//
 bool renderer::point_inclusion(const polygon_t& poly, const coord_t& point) {
@@ -31,8 +41,12 @@ bool renderer::point_inclusion(const polygon_t& poly, const coord_t& point) {
 	//int horizontal_ray = point.y;
 
 	int wn = 0;
+	DBG("point: (%d,%d)\n", point.x, point.y);
 	for (unsigned i = 0; i < poly.size(); ++i) {
+		DBG("poly[%d]: (%d, %d)\n", i, poly[i].x, poly[i].y);
+		DBG("poly[%d]: (%d, %d)\n", i+1, poly[i+1].x, poly[i+1].y);
 		if (is_on_line(point, poly[i], poly[i+1])) {
+			DBG("was on_line\n");
 			return true;
 		}
 	}

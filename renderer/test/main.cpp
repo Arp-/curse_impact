@@ -108,6 +108,21 @@ TEST_CASE ("winding number") {
 	for (const auto& p : points_on) {
 		REQUIRE(true == point_inclusion(poly, p));
 	}
+}
+
+TEST_CASE ("winding number 2") {
+	printf("windiwng number2\n");
+	using renderer::polygon_t;
+	using renderer::coord_t;
+	polygon_t poly { {0, 10}, {10, 5}, {10, 0} };
+	std::vector<coord_t> points_on = { {0,0}, {0,1}, {0,2}, {0,3}, {0,4}, {0,5} };
+	for (const auto& p : points_on) {
+		REQUIRE(false == point_inclusion(poly, p));
+	}
+	std::vector<coord_t> points_on2 = { {5,10}, {6,10}, {7,10} };
+	for (const auto& p : points_on2) {
+		REQUIRE(false == point_inclusion(poly, p));
+	}
 
 }
 
