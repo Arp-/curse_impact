@@ -9,14 +9,14 @@ static int is_left(
 
 	return (b.x-a.x) * (o.y-a.y) - (o.x-a.x) * (b.y-a.y);
 }
-
+//-----------------------------------------------------------------------------//
 static bool is_between(int num, int begin, int end) {
 	if (begin > end) {
 		std::swap(begin, end);
 	}
 	return begin <= num && num <= end;
 }
-
+//-----------------------------------------------------------------------------//
 static bool is_on_line(
 		const renderer::coord_t& o, const renderer::coord_t& a, const renderer::coord_t& b) {
 	if ((b.x - a.x) == 0) {
@@ -24,7 +24,7 @@ static bool is_on_line(
 	}
 	return is_between(o.x, a.x, b.x) && o.y - a.y == (b.y - a.y)/(b.x - a.x) * o.x;
 }
-
+//-----------------------------------------------------------------------------//
 bool renderer::point_inclusion(const polygon_t& poly, const coord_t& point) {
 
 	// get a ray from the point
@@ -66,7 +66,6 @@ renderer::normalize(const vector_t& vec) {
 bool
 renderer::is_parallel(const vector_t& A, const vector_t& B) {
 	//coord_t norm_A = normalize(A);
-
 	return true;
 }
 //-----------------------------------------------------------------------------//

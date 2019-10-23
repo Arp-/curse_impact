@@ -37,7 +37,7 @@ renderer::canvas_t<test_flavour> make_canvas() {
 }
 
 
-TEST_CASE ("macska") {
+TEST_CASE ("test equality") {
 	REQUIRE(1 == 1);
 }
 
@@ -59,7 +59,6 @@ TEST_CASE ("test polygon contining_rect") {
 	std::cout << "p2: " << *p2.containing_rect() << std::endl;
 	std::cout << "p3: " << *p3.containing_rect() << std::endl;
 	std::cout << "p4: " << *p4.containing_rect() << std::endl;
-
 }
 
 TEST_CASE ("canvas scale into") {

@@ -18,11 +18,11 @@ message("MESSAGE: ${source}")
 ExternalProject_Add(
   catch
   PREFIX ${CMAKE_BINARY_DIR}/catch
-  GIT_REPOSITORY "https://github.com/philsquared/Catch"
+  GIT_REPOSITORY "https://github.com/catchorg/Catch2.git"
   GIT_TAG "v1.11.0"
   TIMEOUT 10000
   UPDATE_COMMAND ""
-  DOWNLOAD_COMMAND ""
+  #DOWNLOAD_COMMAND ""
   CONFIGURE_COMMAND ""
   BUILD_COMMAND ""
   INSTALL_COMMAND ""
@@ -46,6 +46,12 @@ set (CMAKE_CXX_FLAGS "-std=c++14 -ggdb -pedantic -Wall -Werror -O0")
 
 file (GLOB test_source RELATIVE "${CMAKE_SOURCE_DIR}" "test/*.cpp")
 add_executable(run_test ${test_source} ${source})
+
+file (GLOB exc_file RELATIVE "${CMAKE_SOURCE_DIR}" "exc/main.cpp")
+
+exec_program("pkg-config ncurses --libs" OUTPUT_VARIABLE NCURSES_LIBS)
+add_executable(test_render ${exc_file} ${source})
+target_link_libraries(test_render ${NCURSES_LIBS})
 
 
 if (NOT LIBDIR)
