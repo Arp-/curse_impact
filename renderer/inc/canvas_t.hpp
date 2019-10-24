@@ -4,10 +4,23 @@
 #include <vector>
 #include <utility>
 #include <iostream>
+#include <utility>
 #include "polygon_t.hpp"
 #include "scale.hpp"
+#include "algorithm.hpp"
 
 namespace renderer {
+
+	namespace impl {
+		inline int make_mask(int x, int y, polygon_t p) {
+			int mask = 0;
+			mask |= point_inclusion(p, {x, y})?UpperLeft:0;
+			mask |= point_inclusion(p, {x+1,y})?UpperRight:0;
+			mask |= point_inclusion(p, {x,y+1})?LowerLeft:0;
+			mask |= point_inclusion(p, {x+1,y+1})?LowerRight:0;
+			return mask;
+		}
+	}
 
 	template <typename flavour_T>
 	class canvas_t {
@@ -50,18 +63,10 @@ namespace renderer {
 				for (;it != this->container_.end(); ++it) {
 					const auto& cont_rect = it->first.containing_rect();
 					if (cont_rect) {
-						if (cont_rect->first.x < min.x) {
-							min.x = cont_rect->first.x;
-						} 
-						if (cont_rect->first.y < min.y) {
-							min.y = cont_rect->first.y;
-						}
-						if (cont_rect->second.x > max.x) {
-							max.x = cont_rect->second.x;
-						}
-						if (cont_rect->second.y > max.y) {
-							max.y = cont_rect->second.y;
-						}
+						min.x = std::min(cont_rect->first.x, min.x);
+						min.y = std::min(cont_rect->first.y, min.y);
+						max.x = std::max(cont_rect->second.x, max.x);
+						max.y = std::max(cont_rect->second.y, max.y);
 					}
 				}
 				return { rect_t { min, max }};
@@ -83,9 +88,30 @@ namespace renderer {
 					}
 					canvas.add(scaled_polygon, poly_attr_pair.second);
 				}
-
 				return canvas;
 			}
+
+			void render() {
+				flavour_T flavour;
+				const util::optional<rect_t>& rect = this->containing_rect();
+				if (!rect) {
+					throw std::runtime_error { "couldn't determine containing rectange!" };
+				}
+
+				for (const auto& p : *this) {
+					const auto& poly = p.first;
+					for (int x = rect->first.x; x <= rect->second.x; ++x) {
+						for (int y = rect->first.y; y <= rect->second.y; ++y) {
+							int mask = impl::make_mask(x, y, poly);
+							if (mask > 0) {
+								auto&& repr = flavour.represent(mask, p.second);
+								flavour.render(x,y, repr);
+							}
+						}
+					}
+				}
+			}
+
 
 		private: //-- private variables --//
 

@@ -17,6 +17,13 @@ namespace renderer {
 	// Can only determine the rotation if [a,b] vector crosses o.y line
 	bool is_clockwise(const coord_t& o, const coord_t& a, const coord_t& b);
 
+	enum Corner {
+		UpperLeft = 1,
+		LowerLeft = 2,
+		LowerRight = 4,
+		UpperRight = 8
+	};
+
 }
 
 
