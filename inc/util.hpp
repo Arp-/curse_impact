@@ -126,7 +126,7 @@ namespace util {
 
 			~naive_optional() = default;
 
-			explicit operator bool() const {
+			operator bool() const {
 				return this->init_;
 			}
 
@@ -156,6 +156,11 @@ namespace util {
 			naive_optional& operator=(const T& value) {
 				this->init_ = true;
 				this->value_ = value;
+				return *this;
+			}
+
+			naive_optional& operator=(std::initializer_list<nullopt_t> init_list) {
+				this->init_ = false;
 				return *this;
 			}
 

@@ -48,6 +48,19 @@ namespace renderer {
 		return out;
 	}
 
+	inline size_t rect_width(const polygon_t::rect_t& r) {
+		if (r.second.x > r.first.x) {
+			return r.second.x - r.first.x;
+		}
+		return r.first.x - r.second.x;
+	}
+
+	inline size_t rect_height(const polygon_t::rect_t& r) {
+		if (r.second.y > r.first.y) {
+			return r.second.y - r.first.y;
+		}
+		return r.first.y - r.second.y;
+	}
 
 
 

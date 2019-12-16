@@ -85,6 +85,8 @@ class gamefield_t {
 
 		void hitcheck(const gamefield_t& prev_gf);
 
+		void reset();
+
 
 	private: //-- private functions --//
 

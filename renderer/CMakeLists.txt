@@ -41,7 +41,7 @@ file (GLOB_RECURSE source RELATIVE "${CMAKE_SOURCE_DIR}" "src/*.cpp")
 
 file (GLOB_RECURSE header RELATIVE "${CMAKE_SOURCE_DIR}" "inc/*.hpp")
 
-set (CMAKE_CXX_FLAGS "-std=c++14 -ggdb -pedantic -Wall -Werror -O0")
+set (CMAKE_CXX_FLAGS "-std=c++14 -ggdb -pedantic -Wall -O0")
 
 
 file (GLOB test_source RELATIVE "${CMAKE_SOURCE_DIR}" "test/*.cpp")

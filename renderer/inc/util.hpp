@@ -151,7 +151,6 @@ namespace renderer { namespace util {
 
 
 
-
 }} // namespace renderere // namespace util
 
 

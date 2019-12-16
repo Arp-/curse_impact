@@ -200,6 +200,14 @@ script_t::read_enemy_ship_list(const pugi::xml_node& root) {
 }
 //-----------------------------------------------------------------------------//
 void
+script_t::read_next_level(const pugi::xml_node& root) {
+	pugi::xml_attribute next_level = root.attribute("next_level");
+	if (next_level) {
+		this->next_level_ = next_level.value();
+	}
+}
+//-----------------------------------------------------------------------------//
+void
 script_t::read_texture_list(const pugi::xml_node& root) {
 	for (auto texture = root.child("texture");
 			texture; texture = texture.next_sibling("texture")) {
@@ -229,6 +237,10 @@ script_t::read_rectangle_list(const pugi::xml_node& root) {
 }
 //-----------------------------------------------------------------------------//
 void
+script_t::read_xml(const std::string& fp) {
+	this->read_xml(fp.c_str());
+}
+void
 script_t::read_xml(const char* filepath) {
 	pugi::xml_document doc;
 	pugi::xml_parse_result result = doc.load_file(filepath);
@@ -237,6 +249,7 @@ script_t::read_xml(const char* filepath) {
 		throw std::runtime_error("Failed to parse the xml file");
 	}
 	const auto& root = doc.child("level");
+	read_next_level(root);
 	read_texture_list(root);
 	read_rectangle_list(root);
 	read_enemy_ship_list(root);
@@ -294,4 +307,34 @@ script_t::end() const {
 		return pair1.first < pair2.first;
 	});
 	return (max->first) < this->time_;
+}
+//-----------------------------------------------------------------------------//
+bool
+script_t::start() const {
+	return this->time_ == 0;
+}
+//-----------------------------------------------------------------------------//
+bool
+script_t::has_next_level() const {
+	return this->next_level_;
+}
+//-----------------------------------------------------------------------------//
+void script_t::reset() {
+	this->history_.clear();
+	this->texture_list_.clear();
+	this->rectangle_list_.clear();
+	this->texture_ship_association_.clear();
+	this->ship_event_cont_.clear();
+	this->time_ = 0;
+	this->gamefield_.reset();
+}
+//-----------------------------------------------------------------------------//
+void
+script_t::init_next_level() {
+	if (!this->has_next_level()) {
+		throw std::runtime_error("Doesn't have next level");
+	}
+	this->reset();
+	this->read_xml(this->resource_path_ + *this->next_level_);
+	this->next_level_ = {};
 }

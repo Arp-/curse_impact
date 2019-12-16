@@ -100,12 +100,13 @@ namespace renderer {
 
 				for (const auto& p : *this) {
 					const auto& poly = p.first;
-					for (int x = rect->first.x; x <= rect->second.x; ++x) {
-						for (int y = rect->first.y; y <= rect->second.y; ++y) {
+					for (int x = rect->first.x; x < rect->second.x; ++x) {
+						for (int y = rect->first.y; y < rect->second.y; ++y) {
 							int mask = impl::make_mask(x, y, poly);
 							if (mask > 0) {
 								auto&& repr = flavour.represent(mask, p.second);
-								flavour.render(x,y, repr);
+								fprintf(stderr,"x: %d, y: %d repr: %c\n", x, y, repr);
+								flavour.render(x, y, repr);
 							}
 						}
 					}

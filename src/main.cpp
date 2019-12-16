@@ -189,7 +189,20 @@ static void run_level_finish_animation(WINDOW* win) {
 	mvwprintw(win, pos.y_, pos.x_, "VICTORY");
 	refresh();
 	sleep(1);
-
+}
+#define print_victory run_level_finish_animation
+//-----------------------------------------------------------------------------//
+static void run_level_start_animation(WINDOW* win, const script_t& script, display::border_drawer_t& border) {
+	wclear(win);
+	position_t pos = get_middle_choords(win);
+	mvwprintw(win, pos.y_, pos.x_, "LEVEL N");
+	refresh();
+	sleep(1);
+	border.draw();
+	mvwprintw(win, pos.y_, pos.x_, "FIGHT! ");
+	refresh();
+	wclear(win);
+	sleep(1);
 }
 //-----------------------------------------------------------------------------//
 static void game() {
@@ -247,12 +260,18 @@ static void game() {
 		}
 		if (script.end() && gf.enemy_list().empty()) {
 			run_level_finish_animation(stdscr);
-			break;
-			//if (!has_next_level()) {
-			//  print_victory();
-			//  break;  // end game with some victory stuff
-			//}
-			//load_next_level();
+			if (!script.has_next_level()) {
+				fprintf(stderr, "finish_this shet\n");
+			  print_victory(stdscr);
+			  break;  // end game with some victory stuff
+			}
+			script.init_next_level();
+			fprintf(stderr, "init next_level\n");
+			wclear(stdscr);
+			continue;
+		}
+		if (script.start()) {
+			run_level_start_animation(stdscr, script, *border_drawer);
 		}
 		//printw("instruction %02X, %02X", (int)instruction.movement, (int)instruction.attack );
 		//printw("hp: %d\n", gf.player().hp());

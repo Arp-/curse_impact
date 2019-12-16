@@ -42,14 +42,14 @@ bool renderer::point_inclusion(const polygon_t& poly, const coord_t& point) {
 
 	int wn = 0;
 	DBG("point: (%d,%d)\n", point.x, point.y);
-	for (unsigned i = 0; i < poly.size(); ++i) {
-		DBG("poly[%d]: (%d, %d)\n", i, poly[i].x, poly[i].y);
-		DBG("poly[%d]: (%d, %d)\n", i+1, poly[i+1].x, poly[i+1].y);
-		if (is_on_line(point, poly[i], poly[i+1])) {
-			DBG("was on_line\n");
-			return true;
-		}
-	}
+//	for (unsigned i = 0; i < poly.size(); ++i) {
+//		DBG("poly[%d]: (%d, %d)\n", i, poly[i].x, poly[i].y);
+//		DBG("poly[%d]: (%d, %d)\n", i+1, poly[i+1].x, poly[i+1].y);
+//		if (is_on_line(point, poly[i], poly[i+1])) {
+//			DBG("was on_line\n");
+//			return true;
+//		}
+//	}
 	for (unsigned i = 0; i < poly.size(); ++i) {
 		if (poly[i].y <= point.y) {
 			if (poly[i+1].y > point.y && is_left(point, poly[i], poly[i+1]) > 0) {

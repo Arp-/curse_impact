@@ -403,4 +403,10 @@ gamefield_t::find_enemy(int ship_id) {
 	return std::find_if(this->enemy_list_.begin(), this->enemy_list_.end(),
 			[ship_id](const ship_t& ship) { return ship.id() == ship_id; });
 }
-
+//-----------------------------------------------------------------------------//
+void
+gamefield_t::reset() {
+	this->bullet_list_.clear();
+	this->enemy_list_.clear();
+	this->enemy_bullet_list_.clear();
+}
