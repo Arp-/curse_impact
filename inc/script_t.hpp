@@ -46,6 +46,8 @@ class script_t {
 
 		void init_next_level();
 
+		const std::string& level_name() const;
+
 
 	private: //-- private functions --//
 
@@ -62,6 +64,8 @@ class script_t {
 		void read_rectangle_list(const pugi::xml_node&);
 
 		void read_next_level(const pugi::xml_node&);
+
+		void read_level_name(const pugi::xml_node&);
 
 		texture_t& texture_ref_by_name(const std::string& name);
 
@@ -87,6 +91,8 @@ class script_t {
 		time_t time_;
 
 		const std::string resource_path_;
+
+		std::string level_name_;
 
 };
 

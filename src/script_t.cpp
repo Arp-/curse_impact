@@ -208,6 +208,12 @@ script_t::read_next_level(const pugi::xml_node& root) {
 }
 //-----------------------------------------------------------------------------//
 void
+script_t::read_level_name(const pugi::xml_node& root) {
+	pugi::xml_attribute level_name = root.attribute("name");
+	this->level_name_ = level_name.value();
+}
+//-----------------------------------------------------------------------------//
+void
 script_t::read_texture_list(const pugi::xml_node& root) {
 	for (auto texture = root.child("texture");
 			texture; texture = texture.next_sibling("texture")) {
@@ -232,7 +238,6 @@ script_t::read_rectangle_list(const pugi::xml_node& root) {
 		r.height_ = std::stoi(height);
 
 		this->rectangle_list_.push_back({id, r});
-
 	}
 }
 //-----------------------------------------------------------------------------//
@@ -249,6 +254,7 @@ script_t::read_xml(const char* filepath) {
 		throw std::runtime_error("Failed to parse the xml file");
 	}
 	const auto& root = doc.child("level");
+	read_level_name(root);
 	read_next_level(root);
 	read_texture_list(root);
 	read_rectangle_list(root);
@@ -338,3 +344,9 @@ script_t::init_next_level() {
 	this->read_xml(this->resource_path_ + *this->next_level_);
 	this->next_level_ = {};
 }
+//-----------------------------------------------------------------------------//
+const std::string& 
+script_t::level_name() const {
+	return this->level_name_;
+}
+

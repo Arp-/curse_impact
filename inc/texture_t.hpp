@@ -11,16 +11,18 @@
 // generally a texture shuld be an X*Y character long matrix
 class texture_t {
 
-	using matrix_row_t = std::vector<char>;
-	using matrix_t = std::vector<matrix_row_t>;
+	public:
+
+		using matrix_row_t = std::vector<char>;
+		using matrix_t = std::vector<matrix_row_t>;
 	
 	public: // public functions --//
 
 		texture_t();
 
-		texture_t(const matrix_t& mtx);
-
 		texture_t(const texture_t& texture) = default;
+
+		texture_t(const matrix_t& mtx);
 
 		~texture_t() = default;
 

@@ -1,5 +1,3 @@
-
-
 #ifndef CURSE_IMPACT_SHIP_T
 #define CURSE_IMPACT_SHIP_T
 
@@ -39,6 +37,8 @@ class ship_t {
 		void move(ship_event_t::direction dir, const rect_t& gf_rect);
 
 		void tick();
+
+		position_t front_center();
 
 		friend std::ostream& operator<<(std::ostream&, const ship_t&);
 

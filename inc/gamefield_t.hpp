@@ -1,5 +1,3 @@
-
-
 #ifndef CURSE_IMPACT_GAMEFIELD_HPP
 #define CURSE_IMPACT_GAMEFIELD_HPP
 
@@ -75,6 +73,8 @@ class gamefield_t {
 
 		void player_shoot();
 
+		void player_special(int special_width);
+
 		void enemy_shoot(int ship_id);
 
 		void bullet_list_tick();
@@ -108,6 +108,9 @@ class gamefield_t {
 		bullet_list_t bullet_list_;
 
 		bullet_list_t enemy_bullet_list_;
+
+		//std::optional<special_attack_t> special_attack_;
+
 
 };
 

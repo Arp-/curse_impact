@@ -1,8 +1,7 @@
-
-
 #include "gamefield_t.hpp"
 #include <algorithm>
 
+//-----------------------------------------------------------------------------//
 template <unsigned range_X, unsigned range_Y>
 static bool is_in_range(const position_t& p1, const position_t& p2) {
 	int start_x = p1.x_ - (range_X >> 2);
@@ -56,6 +55,33 @@ static bool is_position_in_bound(
 
 	return true;
 }
+//-----------------------------------------------------------------------------//
+static bool collision_check(
+		const position_t& ship_pos, int ray_width, const ship_t& enemy_ship) {
+
+	for (int i = ship_pos.y_; i < ship_pos.y_ + ray_width; ++i) {
+		const auto& pos = enemy_ship.position();
+		const auto& rect = enemy_ship.rect();
+		for (int j = pos.y_; j < pos.y_ + rect.height_; ++j) {
+			if (i == j) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+//-----------------------------------------------------------------------------//
+static bool collision_check(
+		const position_t& ship_center, int ray_width, const bullet_t& bullet) {
+
+	for (int i = ship_center.y_; i < ship_center.y_ + ray_width; ++i) {
+		if (bullet.position().y_ == i) {
+			return true;
+		}
+	}
+	return false;
+}
+
 //-----------------------------------------------------------------------------//
 gamefield_t::gamefield_t(rect_t rect): rect_(rect) {
 
@@ -139,6 +165,13 @@ gamefield_t::move_ship(instruction_t instruction) {
 	using movement_t = instruction_t::movement_t;
 	auto movement = instruction.movement;
 
+	if (movement == movement_t::JUMP) {
+		this->player_.position({
+			this->rect_.width_ - 6, this->rect_.height_ >> 1
+		});
+		return;
+	}
+
 	impl::move_helper<movement_t::UP, impl::dim_t::Y, impl::sign_t::MINUS>(
 			this->rect_, this->player_, movement);
 	impl::move_helper<movement_t::DOWN, impl::dim_t::Y, impl::sign_t::PLUS>(
@@ -159,11 +192,36 @@ gamefield_t::move_enemy(int ship_id, ship_event_t::direction dir) {
 //-----------------------------------------------------------------------------//
 void
 gamefield_t::player_shoot() {
-	const auto& ship_pos = this->player_.position();
-	const auto& ship_rect = this->player_.rect();
-	bullet_t bullet { ship_pos.x_ + ship_rect.width_ +1,
-		ship_pos.y_ + (ship_rect.height_ >> 1), this->player_.speed() +1 };
+	const position_t& ship_center = this->player_.front_center();
+	bullet_t bullet { ship_center.x_, ship_center.y_, this->player_.speed() +1 };
 	this->bullet_list_.push_back(bullet);
+}
+//-----------------------------------------------------------------------------//
+void
+gamefield_t::player_special(int special_width) {
+	if (special_width % 2 == 0) {
+		throw std::runtime_error("special_width must be odd!");
+	}
+	const auto& ship_pos = this->player_.position();
+	auto half_special = special_width >> 1;
+	auto ship_center = position_t {
+		ship_pos.x_,
+		ship_pos.y_ + (this->player_.rect().height_ >> 1) - (half_special)
+	};
+	auto it = std::remove_if(
+			this->enemy_bullet_list_.begin(),
+			this->enemy_bullet_list_.end(),
+			[&ship_center, &special_width](const bullet_list_t::value_type& bullet) {
+				return collision_check(ship_center, special_width, bullet);
+	});
+	this->enemy_bullet_list_.erase(it, this->enemy_bullet_list_.end());
+	auto it2 = std::remove_if(
+			this->enemy_list_.begin(),
+			this->enemy_list_.end(),
+			[&ship_center, &special_width](const ship_list_t::value_type& enemy) {
+				return collision_check(ship_center, special_width, enemy);
+	});
+	this->enemy_list_.erase(it2, this->enemy_list_.end());
 }
 //-----------------------------------------------------------------------------//
 void

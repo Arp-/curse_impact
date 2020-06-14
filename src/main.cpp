@@ -41,6 +41,14 @@ static void render_ship(const ship_t& ship, const texture_t& texture) {
 	}
 }
 //-----------------------------------------------------------------------------//
+static texture_t make_filler_texture(const rect_t& rect, char filler) {
+	texture_t::matrix_t mtx;
+	for (int x = 0; x < rect.width_; ++x) {
+		mtx.emplace_back(rect.height_, filler);
+	}
+	return texture_t { mtx };
+}
+//-----------------------------------------------------------------------------//
 static void render_clean_ship(const ship_t& ship) {
 		const auto& rect = ship.rect();
 		const auto& position = ship.position();
@@ -77,12 +85,17 @@ static instruction_t get_instruction() {
 				instr.movement = movement_t::BACKWARD;
 				break;
 			case 'l':
-				instr.movement =  movement_t::FORWARD;
+				instr.movement = movement_t::FORWARD;
 				break;
+			case 'p':
+				instr.movement = movement_t::JUMP;
 		}
 		switch (ch) {
 			case ' ':
 				instr.attack = attack_t::SHOOT;
+				break;
+			case 'm':
+				instr.attack = attack_t::SPECIAL;
 				break;
 		}
 		switch (ch) {
@@ -116,11 +129,7 @@ static void render_clean_ship_list(const gamefield_t::ship_list_t& ship_list) {
 }
 //-----------------------------------------------------------------------------//
 static void render_clean(gamefield_t& gf) {
-	static texture_t clear_texture = {{
-		{ ' ', ' ', ' ' },
-		{ ' ', ' ', ' ' },
-		{ ' ', ' ', ' ' },
-	}};
+	static texture_t clear_texture = make_filler_texture({3,3}, ' ');
 	const auto& ship = gf.player();
 	render_ship(ship, clear_texture);
 	render_bullet_list(gf.bullet_list(), ' ');
@@ -134,8 +143,16 @@ static void game_logic(script_t& script, gamefield_t& gf, instruction_t instruct
 	gf.move_ship(instruction);
 	gf.bullet_list_tick();
 	gf.enemy_list_tick();
-	if (instruction.attack == instruction_t::attack_t::SHOOT) {
-		gf.player_shoot();
+	// special
+	switch (instruction.attack) {
+		case instruction_t::attack_t::SHOOT:
+			gf.player_shoot();
+			break;
+		case instruction_t::attack_t::SPECIAL:
+			gf.player_special(5);
+			break;
+		default:
+			break;
 	}
 	gf.hitcheck(prev_gf);
 }
@@ -178,7 +195,7 @@ static void print_gameover(WINDOW* win) {
 	// TODO ascii art
 	wclear(win);
 	position_t pos = get_middle_choords(win);
-	mvwprintw(win, pos.y_, pos.x_,"GAME OVER (BITCH)");
+	mvwprintw(win, pos.y_, pos.x_,"YOU DED");
 	refresh();
 	sleep(1);
 }
@@ -195,9 +212,10 @@ static void run_level_finish_animation(WINDOW* win) {
 static void run_level_start_animation(WINDOW* win, const script_t& script, display::border_drawer_t& border) {
 	wclear(win);
 	position_t pos = get_middle_choords(win);
-	mvwprintw(win, pos.y_, pos.x_, "LEVEL N");
+	mvwprintw(win, pos.y_, pos.x_, script.level_name().c_str());
 	refresh();
 	sleep(1);
+	wclear(win);
 	border.draw();
 	mvwprintw(win, pos.y_, pos.x_, "FIGHT! ");
 	refresh();
@@ -247,7 +265,6 @@ static void game() {
 		fprintf(stderr, "I fucked up the border_drawer");
 		exit(1);
 	}
-
 
 	while (true) {
 		instruction_t instruction = get_instruction();

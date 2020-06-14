@@ -9,12 +9,13 @@ struct instruction_t {
 		UP,
 		DOWN,
 		BACKWARD,
-		FORWARD
+		FORWARD,
+		JUMP
 	};
 	enum class attack_t {
 		NOP,
 		SHOOT,
-		ULTIMATE
+		SPECIAL
 	};
 	enum class other_t {
 		NOP,

@@ -1,5 +1,5 @@
 
-<level>
+<level name="LEVEL 2">
 	<!-- TEXTURES -->
 	<texture res="/texture/enemy_C.txt" id="enemy_C" />
 	<texture res="/texture/enemy_B.txt" id="enemy_B" />
@@ -19,6 +19,7 @@
 		<move offset="4" direction="down" />
 		<atk offset="6" />
 	</enemy>
+
 
 	<enemy time="15" hp="1" x="-3" y="1/6" speed="-1" texture_ref="enemy_C" rect="rect_DEFAULT" />
 	<enemy time="20" hp="1" x="-3" y="2/6" speed="-1" texture_ref="enemy_C" rect="rect_DEFAULT" />

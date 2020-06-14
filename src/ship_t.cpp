@@ -92,6 +92,14 @@ ship_t::tick() {
 	this->position_.x_ += this->speed_;
 }
 //-----------------------------------------------------------------------------//
+position_t
+ship_t::front_center() {
+	return position_t {
+		this->position_.x_ + this->rect_.width_,
+		this->position_.y_ + (this->rect_.height_ >> 1)
+	};
+}
+//-----------------------------------------------------------------------------//
 std::ostream& operator<<(std::ostream& out, const position_t& pos) {
 	out << "{ x: " << pos.x_ << ", y: " << pos.y_ << "}";
 	return out;

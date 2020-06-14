@@ -1,19 +1,19 @@
 
-
-<level next_level="/level_2.xml">
+<level next_level="/level_2.xml" name="LEVEL 1">
 	<!-- TEXTURES -->
 	<texture res="/texture/enemy_A.txt" id="enemy_A" />
 	<texture res="/texture/enemy_B.txt" id="enemy_B" />
 	<texture res="/texture/enemy_BOSS.txt" id="enemy_BOSS" />
+	<texture res="/texture/enemy_ULT_TEST.txt" id="enemy_ULT_TEST" />
 
 
 	<!-- DIMENSIONS -->
 	<rectangle width="3" height="3" id="rect_DEFAULT" />
 	<rectangle width="5" height="5" id="rect_BOSS" />
-
-
+	<rectangle width="3" height="1" id="rect_ULT_TEST" />
 
 	<!-- ENEMIES -->
+	<!--
 	<enemy time="10" hp="1" x="-3" y="0/6" speed="-1" texture_ref="enemy_B" rect="rect_DEFAULT" >
 		<move offset="2" direction="down" />
 		<move offset="4" direction="down" />
@@ -21,7 +21,41 @@
 		<move offset="4" direction="down" />
 		<atk offset="6" />
 	</enemy>
+	-->
 
+	<!-- TEST blocks -->
+	<enemy time="15" hp="1" x="-3" y="1/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	<enemy time="15" hp="1" x="-3" y="2/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	<enemy time="15" hp="1" x="-3" y="3/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	<enemy time="15" hp="1" x="-3" y="4/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	<enemy time="15" hp="1" x="-3" y="5/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	<enemy time="15" hp="1" x="-3" y="6/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	<enemy time="15" hp="1" x="-3" y="7/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	<enemy time="15" hp="1" x="-3" y="8/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	<enemy time="15" hp="1" x="-3" y="9/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	<enemy time="15" hp="1" x="-3" y="10/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	<enemy time="15" hp="1" x="-3" y="11/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	<enemy time="15" hp="1" x="-3" y="12/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	<enemy time="15" hp="1" x="-3" y="13/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	<enemy time="15" hp="1" x="-3" y="14/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	<enemy time="15" hp="1" x="-3" y="15/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	<enemy time="15" hp="1" x="-3" y="16/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	<enemy time="15" hp="1" x="-3" y="17/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	<enemy time="15" hp="1" x="-3" y="18/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	<enemy time="15" hp="1" x="-3" y="19/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	<enemy time="15" hp="1" x="-3" y="20/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	<enemy time="15" hp="1" x="-3" y="21/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	<enemy time="15" hp="1" x="-3" y="22/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	<enemy time="15" hp="1" x="-3" y="23/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	<enemy time="15" hp="1" x="-3" y="24/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	<enemy time="15" hp="1" x="-3" y="25/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	<enemy time="15" hp="1" x="-3" y="26/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	<enemy time="15" hp="1" x="-3" y="27/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	<enemy time="15" hp="1" x="-3" y="28/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	<enemy time="15" hp="1" x="-3" y="29/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	<enemy time="15" hp="1" x="-3" y="30/30" speed="0" texture_ref="enemy_ULT_TEST" rect="rect_ULT_TEST" />
+	
+	<!--
 	<enemy time="15" hp="1" x="-3" y="1/6" speed="-1" texture_ref="enemy_A" rect="rect_DEFAULT" />
 	<enemy time="20" hp="1" x="-3" y="2/6" speed="-1" texture_ref="enemy_A" rect="rect_DEFAULT" />
 	<enemy time="25" hp="1" x="-3" y="3/6" speed="-1" texture_ref="enemy_B" rect="rect_DEFAULT" />
@@ -45,12 +79,11 @@
 	<enemy time="115" hp="1" x="-3" y="2/6" speed="-2" texture_ref="enemy_B" rect="rect_DEFAULT" />
 	<enemy time="120" hp="1" x="-3" y="2/6" speed="-2" texture_ref="enemy_B" rect="rect_DEFAULT" />
 	<enemy time="125" hp="1" x="-3" y="2/6" speed="-2" texture_ref="enemy_B" rect="rect_DEFAULT" />
-	
-
-
+	-->
 
 	<!-- LAST ONE IS THE BOSS OF THE MAP -->
-	<enemy time="200" hp="10" x="-10" y="2/6" speed="0" texture_ref="enemy_BOSS" rect="rect_BOSS" repeat="true">
+	<!--
+	<enemy time="20" hp="10" x="-10" y="2/6" speed="0" texture_ref="enemy_BOSS" rect="rect_BOSS" repeat="true">
 		<move offset="2" direction="up" />
 		<move offset="4" direction="up" />
 		<move offset="6" direction="up" />
@@ -65,4 +98,5 @@
 		<move offset="24" direction="up" />
 		<atk offset="24" />
 	</enemy>
+	-->
 </level>
